@@ -1,12 +1,14 @@
 #ifndef TOPOLOGYANALYSIS
 #define TOPOLOGYANALYSIS
 #include <iostream>
+#include <Eigen/Core>
 
 class TopologyAnalysis {
    public:
-   TopologyAnalysis();
+   TopologyAnalysis(const Eigen::MatrixXd& connectionMatrix);
    virtual ~TopologyAnalysis();
    private:
+   Eigen::MatrixXd connection;
    bool loopFound{false};
 };
 
