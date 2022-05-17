@@ -9,6 +9,9 @@ int main(void) {
   m(0,1) = -1;
   m(1,1) = m(1,0) + m(0,1);
   TopologyAnalysis top1(m);
-
+  double i = 2.0;
+  // int a = static_cast<int>(i);
+  int a = i;
+  std::cout<<a<<'\n';
   return 0;
 }
