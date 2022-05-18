@@ -1,7 +1,7 @@
 #include "TopologyAnalysis.h"
 TopologyAnalysis::TopologyAnalysis(const Eigen::MatrixXd& connectionMatrix) : 
-    loopFound(false), 
-    connection(connectionMatrix)
+    connection(connectionMatrix),
+    loopFound(false)
 {
     std::cout<<"topology analysis is instanciated.. \n";
     std::cout<<connection<<'\n';
