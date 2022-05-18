@@ -9,11 +9,14 @@ set(MSVC_FLAGS "/W4;/MP;$<$<CONFIG:DEBUG>:/ZI;/Od>$<$<CONFIG:RELEASE>:/O2>")
 set(GNU_FLAGS
     "-Wall;-Werror;-Wextra;-Wpedantic;$<$<CONFIG:DEBUG>:-O0;-g>$<$<CONFIG:RELEASE>:-O3>"
 )
+# display compiler
 if (MSVC)
-    message("The compiler is MSVC")
+    message("-- The compiler is MSVC")
 else()
-    message("The compiler is NOT MSVC")
+    message("-- The compiler is NOT MSVC")
 endif()
+# display build type
+message("-- build type is set to " ${CMAKE_BUILD_TYPE})
 
 add_executable(test1 hello_world.cpp)
 target_link_libraries(test1 PUBLIC Topology)
