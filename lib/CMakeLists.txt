@@ -1,9 +1,3 @@
-cmake_minimum_required(VERSION 3.12)
-project(TopologyLibs)
-set(MSVC_FLAGS "/W4;/MP;$<$<CONFIG:DEBUG>:/ZI;/Od>$<$<CONFIG:RELEASE>:/O2>")
-set(GNU_FLAGS
-    "-Wall;-Werror;-Wextra;-Wpedantic;$<$<CONFIG:DEBUG>:-O0;-g>$<$<CONFIG:RELEASE>:-O3>"
-)
 set(SRC_FILES
     TopologyAnalysis.cpp
 )

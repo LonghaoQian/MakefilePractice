@@ -6,6 +6,7 @@
 class TopologyAnalysis {
    public:
    TopologyAnalysis(const Eigen::MatrixXd& connectionMatrix);
+   void UpdateLoopDetection();
    virtual ~TopologyAnalysis();
    private:
    Eigen::MatrixXd connection;
