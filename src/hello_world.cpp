@@ -8,7 +8,13 @@ int main(void) {
   m(1,0) = 2.5;
   m(0,1) = -1;
   m(1,1) = m(1,0) + m(0,1);
-  TopologyAnalysis top1(m);
+  Eigen::MatrixXi connection(5, 5);
+  connection.setZero();
+  connection(0,0) = 1;
+  connection(1,0) = 0;
+  connection(0,1) = 0;
+  connection(1,1) = 1;
+  GraphTools::TopologyAnalysis top1(connection);
   double i = 2.0;
   // int a = static_cast<int>(i);
   int a = i;
