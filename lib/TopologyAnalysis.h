@@ -23,7 +23,9 @@ namespace GraphTools {
          void Reset(unsigned intmaxSize_);
          void Push(const Node& node);
          void Pop();
+         Node Top();
          unsigned int GetBufferSize();
+         bool IsEmpty();
          Node GetBufferElement(unsigned int index);
          std::pair<bool, int> IsInBuffer(unsigned int index);
          void DisplayElementbyIndex(unsigned int index);
@@ -69,7 +71,7 @@ namespace GraphTools {
 
       void RecordLoopIndex(unsigned int currIndex);
       bool CheckIndexInBuffer(unsigned int currIndex);
-      void TraceBackSearch();
+      void TraceBackSearch(unsigned int startIndex);
       /*
          connectivity(
          subsystem_list[i]->GetSystemInfo().input_connection(j, 0), i) =
@@ -83,6 +85,7 @@ namespace GraphTools {
       Eigen::MatrixXi connection;
       std::vector<Loop> loopIndex;
       NodeBuffer nodeBuffer;
+      std::vector<bool> visitedNodeList;
       std::vector<Node> nodeConnectionList;
       bool connectionMatrixValid{false};
       unsigned int numOfNodes{0};

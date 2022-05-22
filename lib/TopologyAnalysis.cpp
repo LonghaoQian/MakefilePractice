@@ -33,6 +33,14 @@ namespace GraphTools {
         inbuffer[buffer.back().index].second = 0u;
         buffer.pop_back();
     }
+    Node NodeBuffer::Top()
+    {
+        return buffer.back();
+    }
+    bool NodeBuffer::IsEmpty()
+    {
+        return buffer.empty();
+    }
     Node NodeBuffer::GetBufferElement(unsigned int index)
     {
         if (index >= GetBufferSize()) {
@@ -74,6 +82,22 @@ namespace GraphTools {
     {
 
     }
+    bool TopologyAnalysis::RunLoopDetection()
+    {
+        if (connectionMatrixValid) {
+            return false;
+        }
+        auto it = std::find_if(visitedNodeList.begin(), visitedNodeList.end(), [](bool a) {
+            return !a;
+        });
+        while (it != visitedNodeList.end()) {
+            TraceBackSearch(std::distance(visitedNodeList.begin(), it));
+            it = std::find_if(visitedNodeList.begin(), visitedNodeList.end(), [](bool a) {
+                return !a;
+            });
+        }
+        return true;
+    }
     void TopologyAnalysis::Reset(const Eigen::MatrixXi& connectionMatrix)
     {
         connection = connectionMatrix;
@@ -92,7 +116,17 @@ namespace GraphTools {
         std::cout<<"The connection matrix is: \n";
         std::cout<<connection<<'\n';
     }
+    void TopologyAnalysis::DisplayNodeConnectionList()
+    {
 
+    }
+    void TopologyAnalysis::DisplayNodeBuffer()
+    {
+        std::cout<<"This node buffer is: \n";
+        for (unsigned int i = 0; i < nodeBuffer.GetBufferSize(); i++) {
+            std::cout<<"index: "<<nodeBuffer.GetBufferElement(i).index<<'\n';
+        }
+    }
     void TopologyAnalysis::CheckValidity()
     {
         // first check the size of the matrix
@@ -129,10 +163,19 @@ namespace GraphTools {
                 }
             }
         }
+        visitedNodeList.clear();
+        visitedNodeList.shrink_to_fit();
+        visitedNodeList.reserve(numOfNodes);
+        for (unsigned int i = 0; i < numOfNodes; i++) {
+            visitedNodeList.push_back(false);
+        }
     }
 
     void TopologyAnalysis::ResetAllBuffers()
     {
+        for (unsigned int i = 0; i < numOfNodes; i++) {
+            visitedNodeList[i] = false;
+        }
         loopIndex.clear();
         loopIndex.shrink_to_fit();
         nodeBuffer.Reset(numOfNodes);
@@ -156,8 +199,29 @@ namespace GraphTools {
         return nodeBuffer.IsInBuffer(currIndex).first;
     }
 
-    void TopologyAnalysis::TraceBackSearch()
+    void TopologyAnalysis::TraceBackSearch(unsigned int startIndex)
     {
-
+        nodeBuffer.Reset(numOfNodes);
+        nodeBuffer.Push(nodeConnectionList[startIndex]);
+        while (!nodeBuffer.IsEmpty()) {
+            if (nodeBuffer.Top().childIndex.empty()) {
+                // if the childIndex is empty, pop the top
+                nodeBuffer.Pop();
+            } else {
+                auto nextNode = nodeBuffer.Top().childIndex.top();
+                nodeBuffer.Top().childIndex.pop();
+                // if the childIndex is non-empty, check whether the childIndex top element is in the buffer
+                if (CheckIndexInBuffer(nextNode)) {
+                    // if the top childIndex is in the buffer, then record this loop
+                    RecordLoopIndex(nextNode);
+                } else {
+                    // if the top childIndex is not in the buffer, push the node into the buffer and remove
+                    // the top index
+                    nodeBuffer.Push(nodeConnectionList[nextNode]);
+                }
+            }
+        }
+        // after finding all the loops containing startIndex, label this index as visited
+        visitedNodeList[startIndex] = true;
     }
 }
