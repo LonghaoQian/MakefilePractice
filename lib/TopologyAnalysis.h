@@ -72,16 +72,6 @@ namespace GraphTools {
       void RecordLoopIndex(unsigned int currIndex);
       bool CheckIndexInBuffer(unsigned int currIndex);
       void TraceBackSearch(unsigned int startIndex);
-      /*
-         connectivity(
-         subsystem_list[i]->GetSystemInfo().input_connection(j, 0), i) =
-         1;
-         connection matrix: C
-         C(i, j): i from system, j to system
-         C(i, j) = 1 : a directed connection from node i to node j
-         i -> j
-         C(i, j) = 0 : no connection between i and j
-      */
       Eigen::MatrixXi connection;
       std::vector<Loop> loopIndex;
       NodeBuffer nodeBuffer;

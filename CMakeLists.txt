@@ -9,7 +9,7 @@ set(GNU_FLAGS
 #---------------- add third party lib ------------------
 add_subdirectory(thirdparty)
 #------------------- add lib ---------------------------
-add_subdirectory(lib)
+add_subdirectory(graphtools)
 # display compiler
 if (MSVC)
     message("-- The compiler is MSVC")
@@ -19,7 +19,7 @@ endif()
 # display build type
 message("-- build type is set to " ${CMAKE_BUILD_TYPE})
 #--------------- build target --------------------------
-add_executable(test1 src/hello_world.cpp)
-target_link_libraries(test1 PUBLIC Topology)
+add_executable(test1 src/tarjan_method_test.cpp)
+target_link_libraries(test1 PUBLIC GraphAnalysis)
 target_compile_options(test1 PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
                        $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)
