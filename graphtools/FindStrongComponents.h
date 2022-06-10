@@ -6,14 +6,14 @@ namespace GraphAnalysis {
         Wrapper class of Scc Tarjan method
     */
     class SccTarjan {
-      public:
+    public:
         SccTarjan(const AdjacencyXi& input, NodeIndex numOfNodes);
         std::vector<NodeList> GetResult();
         void Reset(const AdjacencyXi& input, NodeIndex numOfNodes);
         bool GetStatus();
         void PrintNodeList();
         virtual ~SccTarjan();
-      private:
+    private:
         bool CheckAdjacencyMatrix();
         void DFSTreeTraverse(NodeIndex rootIndex);
         void RecordResult(NodeIndex rootIndex);

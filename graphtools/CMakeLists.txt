@@ -4,7 +4,7 @@ set(SRC_FILES
 #    BellmanFord.cpp
 #    Dijkstra.cpp
 #    FloydWarshall.cpp
-#    JohnsonCurcitAlg.cpp
+    JohnsonCurcitAlg.cpp
 #    JonhsonPathAlg.cpp
 )
 set(HEADER_FILES
@@ -13,7 +13,7 @@ set(HEADER_FILES
 #    BellmanFord.h
 #    Dijkstra.h
 #    FloydWarshall.h
-#    JohnsonCurcitAlg.h
+    JohnsonCurcitAlg.h
 #    JonhsonPathAlg.h
 )
 add_library(GraphAnalysis STATIC ${HEADER_FILES} ${SRC_FILES})

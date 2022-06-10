@@ -38,11 +38,7 @@ namespace GraphAnalysis {
         inbuffer[buffer.back().index].second = 0u;
         buffer.pop_back();
     }
-    void NodeBuffer::PopTopEdgeList()
-    {
-        buffer[GetBufferSize() - 1u].edgeList.pop_back();
-    }
-    Node NodeBuffer::Top()
+    Node& NodeBuffer::Top()
     {
         return buffer.back();
     }
@@ -54,11 +50,8 @@ namespace GraphAnalysis {
     {
         return buffer.size() > maxSize;
     }
-    Node NodeBuffer::GetBufferElement(unsigned int index)
+    Node& NodeBuffer::GetBufferElement(unsigned int index)
     {
-        if (index >= GetBufferSize()) {
-            return Node(0u, 0.0);
-        }
         return buffer[index];
     }
     std::pair<bool, int> NodeBuffer::IsInBuffer(unsigned int index)

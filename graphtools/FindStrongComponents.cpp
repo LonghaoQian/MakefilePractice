@@ -94,7 +94,7 @@ namespace GraphAnalysis {
                 // if the adj is no-empty, first check whether this
                 // node is previously visited
                 auto index = dfsBuffer.Top().edgeList.back().first;
-                dfsBuffer.PopTopEdgeList();
+                dfsBuffer.Top().edgeList.pop_back();
                 if (disc[index] == 0) {
                     // if not visited, add this node to the buffer
                     AddNodeToBuffer(index);

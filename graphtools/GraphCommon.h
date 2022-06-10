@@ -54,12 +54,11 @@ namespace GraphAnalysis {
          void Reset(unsigned int intmaxSize_);
          void Push(const Node& node);
          void Pop();
-         void PopTopEdgeList();
-         Node Top();
+         Node& Top();
          unsigned int GetBufferSize();
          bool IsEmpty();
          bool ExceedSizeLimit();
-         Node GetBufferElement(unsigned int index);
+         Node& GetBufferElement(unsigned int index);
          std::pair<bool, int> IsInBuffer(unsigned int index);
          void DisplayElementbyIndex(unsigned int index);
       private:
