@@ -15,27 +15,34 @@ namespace GraphAnalysis {
                    const std::vector<NodeList>& Scc,
                    unsigned int numOfNodes);
         std::vector<Loop> GetResult();
-        void DisplayConnectionMatrix();
-        void DisplayNodeConnectionList();
-        void DisplayNodeBuffer();
-        void DisplayBlockedMap();
-        void DisplayBlockedList();
-        void DisplayNodeSccNumber();
+        void PrintConnectionMatrix();
+        void PrintNodeConnectionList();
+        void PrintNodeBuffer();
+        void PrintBlockedMap();
+        void PrintBlockedList();
+        void PrintNodeSccNumber();
+        void PrintInCycle();
     private:
         bool CheckAdjacencyMatrix();
+        void ModifyAdjacencyMatrix();
         void DfsTraverseTree(NodeIndex root);
         void RecordResult();
         void PopBlockedMap(NodeIndex start);
         bool IsInBlockedMap();
-        NodeIndex numofNodes;
+        void AddNodeToBuffer(NodeIndex index);
+        void AddNodeToBlockedMap(NodeIndex index);
+        void UpdateInCycle();
+        NodeIndex numOfNodes;
         AdjacencyXi adjacency;
         NodeBuffer nodeBuffer;
         std::vector<std::vector<NodeIndex>> blockedMap;
         std::vector<bool> blockedList;
         std::vector<bool> inCycle;
+        std::vector<bool> visited;
         std::vector<NodeList> scc;
         std::vector<NodeIndex> nodeSccNumber;
         std::vector<Loop> res;
+        std::vector<Node> nodeList;
     };
 }
 #endif
