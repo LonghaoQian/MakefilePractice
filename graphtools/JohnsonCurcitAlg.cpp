@@ -162,12 +162,9 @@ namespace GraphAnalysis {
     }
     void JohnsonCurcitAlg::DfsTraverseTree(NodeIndex root)
     {
-        int counter = 0;
         // add the root index into the nodebuffer
         AddNodeToBuffer(root);
         while (!nodeBuffer.IsEmpty()) {
-            std::cout<<"---iteration counter "<<counter<<" ---- \n";
-            std::cout<<"currrent index : " <<nodeBuffer.Top().index<<'\n';
             if (nodeBuffer.Top().edgeList.empty()) {
                 // if the current top has no child, check whether it
                 // leads to the root
@@ -211,11 +208,6 @@ namespace GraphAnalysis {
                     // then skip thie child
                     nodeBuffer.Top().edgeList.pop_back();
                 }
-                PrintNodeBuffer();
-                PrintBlockedList();
-                PrintBlockedMap();
-                PrintInCycle();
-                counter++;
             }
         }
         // unblock all at the end of the traverse

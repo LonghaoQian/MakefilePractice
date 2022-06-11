@@ -2,7 +2,6 @@
 #define JOHNSONCURCITALG_H
 
 #include "GraphCommon.h"
-#include "unordered_map"
 namespace GraphAnalysis {
     using Loop = std::vector<NodeIndex>;
     class JohnsonCurcitAlg {

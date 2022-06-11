@@ -2,7 +2,7 @@ set(SRC_FILES
     GraphCommon.cpp
     FindStrongComponents.cpp
 #    BellmanFord.cpp
-#    Dijkstra.cpp
+    Dijkstra.cpp
 #    FloydWarshall.cpp
     JohnsonCurcitAlg.cpp
 #    JonhsonPathAlg.cpp
@@ -11,7 +11,7 @@ set(HEADER_FILES
     GraphCommon.h
     FindStrongComponents.h
 #    BellmanFord.h
-#    Dijkstra.h
+    Dijkstra.h
 #    FloydWarshall.h
     JohnsonCurcitAlg.h
 #    JonhsonPathAlg.h
