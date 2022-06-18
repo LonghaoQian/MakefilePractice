@@ -2,29 +2,22 @@
 namespace GraphAnalysis {
     Dijkstra::Dijkstra(const AdjacencyXi& adjacencyMatrix,
                        const PathCostXd& pathCost,
-                       const NodeCostXd& nodeCost,
                         unsigned int numOfNodes)
 
     {
-        Reset(adjacencyMatrix, pathCost, nodeCost, numOfNodes);
+        Reset(adjacencyMatrix, pathCost, numOfNodes);
     }
     Dijkstra::~Dijkstra()
     {
 
     }
-    std::pair<Path, double> Dijkstra::GetResult(NodeIndex source, NodeIndex destination)
+    DijkstraRes Dijkstra::GetResult(NodeIndex source, NodeIndex destination)
     {
-        // clear buffer
-        for (NodeIndex i = 0; i < numberOfNodes; i++) {
-            dist[i] = -1.0;
-            parent[i] = i;
-            visited[i] = false;
+        bool flag = BfsTraverseTree(source, destination);
+        if(flag) {
+            RecordResult(destination);
         }
-        // set the distanc of the source as 0
-        dist[source] = 0u;
-        BfsTraverseTree(source, destination);
-        RecordResult(destination);
-        return {path, dist[destination]};
+        return {path, dist[destination], flag};
     }
     void Dijkstra::PrintConnectionMatrix()
     {
@@ -35,9 +28,9 @@ namespace GraphAnalysis {
     {
         std::cout<<"node list is: \n";
         for (auto it = nodeList.begin(); it != nodeList.end(); it++) {
-            std::cout<<"index: "<<it->index<<", edge List: ";
+            std::cout<<"index: "<<it->index<<", edge List and cost: ";
             for (auto it1 = it->edgeList.begin(); it1 != it->edgeList.end(); it1++) {
-                std::cout<<it1->first<<", ";
+                std::cout<<it1->first<<" ("<<it1->second<<"), ";
             }
             std::cout<<'\n';
         }
@@ -47,28 +40,20 @@ namespace GraphAnalysis {
         std::cout<<"path cost matrix is: \n";
         std::cout<<pathCost<<'\n';
     }
-    void Dijkstra::PrintNodeCostVector()
-    {
-        std::cout<<"node cost vector is: \n";
-        std::cout<<nodeCost<<'\n';
-    }
     void Dijkstra::Reset(const AdjacencyXi& adjacencyMatrix, 
                           const PathCostXd& pathCost,
-                          const NodeCostXd& nodeCost,
                           unsigned int numOfNodes)
     {
-        this->numberOfNodes = numberOfNodes;
+        this->numberOfNodes = numOfNodes;
         adjacency = adjacencyMatrix;
         this->pathCost = pathCost;
-        this->nodeCost = nodeCost;
         // update nodeList
         nodeList = GetNodeFromAdjMatrix(adjacency);
         // update cost
         for (NodeIndex i = 0; i < numberOfNodes; i++) {
-            nodeList[i].nodeCost = nodeCost(i);
             for (auto it = nodeList[i].edgeList.begin(); 
                  it != nodeList[i].edgeList.end(); it++) {
-                it->second = pathCost[it->first];
+                it->second = this->pathCost(i, it->first);
             }
         }
         // reset all buffer
@@ -80,14 +65,10 @@ namespace GraphAnalysis {
         visited.clear();
         visited.shrink_to_fit();
         visited.reserve(numberOfNodes);
-        path.clear();
-        path.shrink_to_fit();
-        path.reserve(numberOfNodes);
         for (NodeIndex i = 0; i < numberOfNodes; i++) {
             dist[i] = -1.0;
             parent.push_back(0);
             visited.push_back(false);
-            path.push_back(0);
         }
     }
     double Dijkstra::GetDist(NodeIndex index)
@@ -98,8 +79,16 @@ namespace GraphAnalysis {
     {
         return true;
     }
-    void Dijkstra::BfsTraverseTree(NodeIndex source, NodeIndex destination)
+    bool Dijkstra::BfsTraverseTree(NodeIndex source, NodeIndex destination)
     {
+        // clear buffer
+        for (NodeIndex i = 0; i < numberOfNodes; i++) {
+            dist[i] = -1.0;
+            parent[i] = i;
+            visited[i] = false;
+        }
+        // set the distanc of the source as 0
+        dist[source] = 0u;
         // if the cost of a is less or equal to b, 
         // then a comes before b
         auto cmp = [this](NodeIndex a, NodeIndex b){
@@ -111,36 +100,40 @@ namespace GraphAnalysis {
         for (NodeIndex i = 0; i < numberOfNodes; i++) {
             nodeToVisit[i] = nodeList[i].index;
         }
-        // 
-        std::sort(nodeToVisit.begin(), nodeToVisit.end(), cmp);
-        // look at the resultos
-        for (auto t : nodeToVisit) {
-            std::cout<<t<<'\n';
-        }
         // reset some buffer
         while(!nodeToVisit.empty()) {
-            // sort the nodeToVisit in ascending order
-            std::sort(nodeToVisit.begin(), nodeToVisit.end(), cmp);
+            // find the element with smallest 
+            auto it1 = std::min_element(nodeToVisit.begin(), nodeToVisit.end(), cmp);
             // the last element is the one with the lowest dist
-            auto root = nodeToVisit.back();
+            auto root = *it1;
+            if (dist[root] < 0) {
+                break;
+            }
+            // if the smallest element is -1, break the while loop
             visited[root] = true;
-            nodeToVisit.pop_back();
+            nodeToVisit.erase(it1);
             for (auto it = nodeList[root].edgeList.begin(); it != nodeList[root].edgeList.end(); it++) {
                 if (!visited[it->first]) {
                     // if this is not removed, upate the dist value
                     auto cost = dist[root] + it->second;
-                    if (dist[it->first] > cost) {
+                    if (GreaterCost(dist[it->first], cost)) {
                         // update the dist and parent if the child
                         // dist is greater than the current cost
                         dist[it->first] = cost;
                         parent[it->first] = root;
-                    }
+                    } 
                 }
             }
         }
+        // when the distance of destination is not -1, then 
+        // the destination can be reached
+        return dist[destination] > 0;
     }
     void Dijkstra::RecordResult(NodeIndex destination)
     {
+        path.clear();
+        path.shrink_to_fit();
+        path.reserve(numberOfNodes);
         auto currIndex = destination;
         while (parent[currIndex] != currIndex)
         {

@@ -27,3 +27,7 @@ add_executable(test2 src/johnson_curcit_test.cpp)
 target_link_libraries(test2 PUBLIC GraphAnalysis)
 target_compile_options(test2 PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
                        $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)
+add_executable(test3 src/dijstra_test.cpp)
+target_link_libraries(test3 PUBLIC GraphAnalysis)
+target_compile_options(test3 PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
+                       $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)
