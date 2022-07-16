@@ -1,0 +1,25 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+           "name": "01 (gdb) test4",
+           "type": "cppdbg",
+           "request": "launch",
+           "program": "${workspaceRoot}/build/test4",
+           "args": [],
+           "stopAtEntry": true,
+           "cwd": "${workspaceFolder}",
+           "environment": [],
+           "externalConsole": true,
+           "MIMode": "gdb",
+           "setupCommands": [
+            {
+                "description": "enable pretty printing",
+                "text": "-enable-pretty printing",
+                "ignoreFailures": true
+            }
+           ],
+           "preLaunchTask": "01 build"
+        }
+    ]
+}
