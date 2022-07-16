@@ -1,4 +1,7 @@
 {
+    "[cpp]": {
+        "editor.defaultFormatter": "xaver.clang-format"
+    },
     "makefile.extensionOutputFolder": "./.vscode",
     "files.associations": {
         "array": "cpp",
@@ -57,7 +60,8 @@
         "memory_resource": "cpp",
         "numeric": "cpp",
         "random": "cpp",
-        "mutex": "cpp"
+        "mutex": "cpp",
+        "any": "cpp"
     },
     "C_Cpp.default.configurationProvider": "go2sh.cmake-integration"
 }

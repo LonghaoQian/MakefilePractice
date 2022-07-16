@@ -8,8 +8,10 @@ set(GNU_FLAGS
 )
 #---------------- add third party lib ------------------
 add_subdirectory(thirdparty)
-#------------------- add lib ---------------------------
+#------------------- add grahtools ---------------------------
 add_subdirectory(graphtools)
+#------------------- add lib ---------------------------
+add_subdirectory(lib)
 # display compiler
 if (MSVC)
     message("-- The compiler is MSVC")
@@ -30,4 +32,8 @@ target_compile_options(test2 PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
 add_executable(test3 src/dijstra_test.cpp)
 target_link_libraries(test3 PUBLIC GraphAnalysis)
 target_compile_options(test3 PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
+                       $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)
+add_executable(test4 src/singleton_test.cpp)
+target_link_libraries(test4 PUBLIC Topology)
+target_compile_options(test4 PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
                        $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)

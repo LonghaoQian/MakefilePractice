@@ -53,7 +53,9 @@ cout << "\nSCCs in first graph \n";
     g5.addEdge(4,2);
     g5.SCC();
 
-    SCCs in first graph
+    SCCs in first graph#include <any>
+#include <iostream>
+#include <string>
 4
 3
 1 2 0

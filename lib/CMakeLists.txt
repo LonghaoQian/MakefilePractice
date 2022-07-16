@@ -1,7 +1,15 @@
 set(SRC_FILES
+    module_register.cpp
+    test_module_0.cpp
+    test_module_1.cpp
+    test_module_2.cpp
     TopologyAnalysis.cpp
 )
 set(HEADER_FILES
+    module_register.h
+    test_module_0.h
+    test_module_1.h
+    test_module_2.h
     TopologyAnalysis.h
 )
 add_library(Topology STATIC ${HEADER_FILES} ${SRC_FILES})
