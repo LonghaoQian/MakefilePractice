@@ -9,14 +9,14 @@ cout << "\nSCCs in first graph \n";
     g1.addEdge(0, 3);
     g1.addEdge(3, 4);
     g1.SCC();
- 
+
     cout << "\nSCCs in second graph \n";
     Graph g2(4);
     g2.addEdge(0, 1);
     g2.addEdge(1, 2);
     g2.addEdge(2, 3);
     g2.SCC();
- 
+
     cout << "\nSCCs in third graph \n";
     Graph g3(7);
     g3.addEdge(0, 1);
@@ -28,7 +28,7 @@ cout << "\nSCCs in first graph \n";
     g3.addEdge(3, 5);
     g3.addEdge(4, 5);
     g3.SCC();
- 
+
     cout << "\nSCCs in fourth graph \n";
     Graph g4(11);
     g4.addEdge(0,1);g4.addEdge(0,3);
@@ -42,7 +42,7 @@ cout << "\nSCCs in first graph \n";
     g4.addEdge(8,9);
     g4.addEdge(9,8);
     g4.SCC();
- 
+
     cout << "\nSCCs in fifth graph \n";
     Graph g5(5);
     g5.addEdge(0,1);
@@ -81,7 +81,7 @@ SCCs in fourth graph
 10
 
 SCCs in fifth graph
-4 3 2 1 0 
+4 3 2 1 0
 */
 
 GraphAnalysis::AdjacencyXi LoadTestCase()
@@ -107,12 +107,13 @@ GraphAnalysis::AdjacencyXi LoadTestCase()
     return connection;
 }
 
-int main(void) {
+int main(void)
+{
     Eigen::MatrixXd m(2, 2);
-    m(0,0) = 3;
-    m(1,0) = 2.5;
-    m(0,1) = -1;
-    m(1,1) = m(1,0) + m(0,1);
+    m(0, 0) = 3;
+    m(1, 0) = 2.5;
+    m(0, 1) = -1;
+    m(1, 1) = m(1, 0) + m(0, 1);
     auto connection = LoadTestCase();
     auto res1 = GraphAnalysis::GetNodeFromAdjMatrix(connection);
     GraphAnalysis::SccTarjan sccDetection(connection, connection.rows());
@@ -120,10 +121,10 @@ int main(void) {
     // print the result
     auto res = sccDetection.GetResult();
     for (auto it = res.begin(); it != res.end(); it++) {
-      for (auto it2 = it->begin(); it2 != it->end(); it2++) {
-          std::cout<<*it2<<" ";
-      }
-      std::cout<<'\n';
+        for (auto it2 = it->begin(); it2 != it->end(); it2++) {
+            std::cout << *it2 << " ";
+        }
+        std::cout << '\n';
     }
     return 0;
 }

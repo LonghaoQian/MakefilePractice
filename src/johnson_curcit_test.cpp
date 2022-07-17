@@ -28,7 +28,8 @@ GraphAnalysis::AdjacencyXi LoadTestCase()
     return connection;
 }
 
-int main(void) {
+int main(void)
+{
     auto adjacency = LoadTestCase();
     auto res1 = GraphAnalysis::GetNodeFromAdjMatrix(adjacency);
     GraphAnalysis::SccTarjan sccDetection(adjacency, adjacency.rows());
@@ -36,19 +37,20 @@ int main(void) {
     // print the result
     auto res = sccDetection.GetResult();
     for (auto it = res.begin(); it != res.end(); it++) {
-      for (auto it2 = it->begin(); it2 != it->end(); it2++) {
-          std::cout<<*it2<<" ";
-      }
-      std::cout<<'\n';
+        for (auto it2 = it->begin(); it2 != it->end(); it2++) {
+            std::cout << *it2 << " ";
+        }
+        std::cout << '\n';
     }
-	GraphAnalysis::JohnsonCurcitAlg curcitDetection(adjacency, res,  adjacency.rows());
+    GraphAnalysis::JohnsonCurcitAlg curcitDetection(adjacency, res,
+                                                    adjacency.rows());
     auto resCycle = curcitDetection.GetResult();
-    std::cout<<"cycles are: \n";
+    std::cout << "cycles are: \n";
     for (auto it = resCycle.begin(); it != resCycle.end(); it++) {
-      for (auto it2 = it->begin(); it2 != it->end(); it2++) {
-          std::cout<<*it2<<" ";
-      }
-      std::cout<<'\n';
-    }    
-	return 0;
+        for (auto it2 = it->begin(); it2 != it->end(); it2++) {
+            std::cout << *it2 << " ";
+        }
+        std::cout << '\n';
+    }
+    return 0;
 }
