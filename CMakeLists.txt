@@ -8,10 +8,10 @@ set(GNU_FLAGS
 )
 #---------------- add third party lib ------------------
 add_subdirectory(thirdparty)
-#------------------- add grahtools ---------------------------
-add_subdirectory(graphtools)
 #------------------- add lib ---------------------------
 add_subdirectory(lib)
+#------------------- add design mode test ---------------------------
+add_subdirectory(desgin_mode_test)
 # display compiler
 if (MSVC)
     message("-- The compiler is MSVC")
@@ -34,6 +34,6 @@ target_link_libraries(test3 PUBLIC GraphAnalysis)
 target_compile_options(test3 PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
                        $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)
 add_executable(test4 src/singleton_test.cpp)
-target_link_libraries(test4 PUBLIC Topology)
+target_link_libraries(test4 PUBLIC DesignMode)
 target_compile_options(test4 PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
                        $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)
