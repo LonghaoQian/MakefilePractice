@@ -4,7 +4,7 @@ project(cmake_template VERSION 1.0.0 LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(MSVC_FLAGS "/W4;/MP;$<$<CONFIG:DEBUG>:/ZI;/Od>$<$<CONFIG:RELEASE>:/O2>")
 set(GNU_FLAGS
-    "-Wall;-Werror;-Wextra;-Wpedantic;$<$<CONFIG:DEBUG>:-O0;-g>$<$<CONFIG:RELEASE>:-O3>"
+    "-Wall;-Werror;-Wextra;-Wpedantic;$<$<CONFIG:DEBUG>:-O0;-g;-fno-omit-frame-pointer;-fsanitize=address>$<$<CONFIG:RELEASE>:-O3>;"
 )
 #---------------- add third party lib ------------------
 add_subdirectory(thirdparty)
@@ -22,18 +22,18 @@ endif()
 message("-- build type is set to " ${CMAKE_BUILD_TYPE})
 #--------------- build target --------------------------
 add_executable(test1 src/tarjan_method_test.cpp)
-target_link_libraries(test1 PUBLIC GraphAnalysis)
+target_link_libraries(test1 PUBLIC GraphAnalysis -lasan)
 target_compile_options(test1 PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
                        $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)
 add_executable(test2 src/johnson_curcit_test.cpp)
-target_link_libraries(test2 PUBLIC GraphAnalysis)
+target_link_libraries(test2 PUBLIC GraphAnalysis -lasan)
 target_compile_options(test2 PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
                        $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)
 add_executable(test3 src/dijstra_test.cpp)
-target_link_libraries(test3 PUBLIC GraphAnalysis)
+target_link_libraries(test3 PUBLIC GraphAnalysis -lasan)
 target_compile_options(test3 PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
                        $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)
 add_executable(test4 src/singleton_test.cpp)
-target_link_libraries(test4 PUBLIC DesignMode)
+target_link_libraries(test4 PUBLIC DesignMode -lasan)
 target_compile_options(test4 PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
-                       $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)
+                      $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)

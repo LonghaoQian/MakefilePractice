@@ -10,6 +10,16 @@
           "isDefault": true
         },
         "problemMatcher": []
+      },
+      {
+        "label": "02 config",
+        "type": "shell",
+        "command": "./config.sh",
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "problemMatcher": []
       }
     ]
   }
