@@ -31,7 +31,6 @@ GraphAnalysis::AdjacencyXi LoadTestCase()
 int main(void)
 {
     auto adjacency = LoadTestCase();
-    auto res1 = GraphAnalysis::GetNodeFromAdjMatrix(adjacency);
     GraphAnalysis::SccTarjan sccDetection(adjacency, adjacency.rows());
     sccDetection.PrintNodeList();
     // print the result

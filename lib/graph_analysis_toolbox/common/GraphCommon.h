@@ -51,7 +51,7 @@ struct Node {
 class NodeBuffer
 {
    public:
-    NodeBuffer(unsigned int maxSize_);
+    explicit NodeBuffer(unsigned int maxSize_);
     virtual ~NodeBuffer();
     void Reset(unsigned int intmaxSize_);
     void Push(const Node &node);

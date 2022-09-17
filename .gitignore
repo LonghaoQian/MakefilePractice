@@ -63,3 +63,6 @@ out/**
 *.exe
 *.out*
 *.app
+
+# cppcheck results
+cppcheck_results.*

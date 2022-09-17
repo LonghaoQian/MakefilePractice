@@ -20,6 +20,16 @@
           "isDefault": true
         },
         "problemMatcher": []
+      },
+      {
+        "label": "03 cppcheck",
+        "type": "shell",
+        "command": "./code_check.sh",
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "problemMatcher": []
       }
     ]
   }
