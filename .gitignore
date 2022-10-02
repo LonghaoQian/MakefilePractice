@@ -66,3 +66,7 @@ out/**
 
 # cppcheck results
 cppcheck_results.*
+
+# ut results
+ut/report/**
+ut/coverage/**

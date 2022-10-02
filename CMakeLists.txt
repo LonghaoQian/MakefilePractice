@@ -37,3 +37,6 @@ add_executable(test4 src/singleton_test.cpp)
 target_link_libraries(test4 PUBLIC DesignMode -lasan)
 target_compile_options(test4 PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
                       $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)
+
+#----------------build test target -----------------------
+add_subdirectory(ut)
