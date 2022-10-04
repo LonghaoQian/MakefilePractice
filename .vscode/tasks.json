@@ -30,6 +30,16 @@
           "isDefault": true
         },
         "problemMatcher": []
+      },
+      {
+        "label": "04 run_ut",
+        "type": "shell",
+        "command": "./run_ut.sh",
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "problemMatcher": []
       }
     ]
   }

@@ -18,7 +18,7 @@ set(ut_gtestlib_dir
 
 add_executable(${UT_TARGET} ${ut_src_list})
 # when using gtest, pthread lib must be linked as well
-target_link_libraries(${UT_TARGET} PUBLIC -lasan gtestd gtest_maind pthread)
+target_link_libraries(${UT_TARGET} PUBLIC -lasan gtestd gtest_maind pthread --coverage)
 target_link_directories(${UT_TARGET} PUBLIC ${ut_gtestlib_dir})
 
 target_include_directories(${UT_TARGET} 
@@ -29,4 +29,5 @@ target_include_directories(${UT_TARGET}
 target_compile_options(${UT_TARGET}
                         PRIVATE
                         $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>$<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>
-                        )
+                        --coverage
+)
