@@ -61,7 +61,14 @@
         "numeric": "cpp",
         "random": "cpp",
         "mutex": "cpp",
-        "any": "cpp"
+        "any": "cpp",
+        "geometry": "cpp",
+        "hash_map": "cpp",
+        "future": "cpp",
+        "iomanip": "cpp",
+        "cinttypes": "cpp",
+        "valarray": "cpp",
+        "variant": "cpp"
     },
     "C_Cpp.default.configurationProvider": "go2sh.cmake-integration"
 }

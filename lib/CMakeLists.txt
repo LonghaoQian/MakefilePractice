@@ -1,1 +1,2 @@
 add_subdirectory(graph_analysis_toolbox)
+add_subdirectory(math_utils)

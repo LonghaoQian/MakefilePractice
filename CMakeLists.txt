@@ -38,5 +38,9 @@ target_link_libraries(test4 PUBLIC DesignMode -lasan)
 target_compile_options(test4 PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
                       $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)
 
+add_executable(test5 src/rotation_test.cpp)
+target_link_libraries(test5 PUBLIC math_utils -lasan)
+target_compile_options(test5 PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
+                      $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)
 #----------------build test target -----------------------
 add_subdirectory(ut)
