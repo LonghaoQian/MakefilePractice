@@ -18,10 +18,29 @@ if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 *************************************************************/
-// this is the main entrance of the ut main
+
+#include <iostream>
+#include <stdint.h>
 #include "gtest/gtest.h"
-int main(int argc, char **argv)
+#include "attitude_kinematics.cpp"
+
+class ut_attitude_kinematics : public testing::Test
 {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+   protected:
+    virtual void SetUp()
+    {
+        std::cout << "setup attitude kinematics testing.... \n";
+    }
+    virtual void TearDown()
+    {
+        std::cout << "teardown attitude kinematics testing... \n";
+    }
+};
+
+TEST_F(ut_attitude_kinematics, test_Veemap)
+{
+    Eigen::Matrix3d input;
+    input << 0.0, -0.3, 0.1, 0.1, 0.0, 3.1, -4.0, -3.8, 0.0;
+    auto res = MathAuxiliary::Veemap(input);
+    EXPECT_EQ(res(MathAuxiliary::VECTOR_X), -input(1, 2));
 }

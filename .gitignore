@@ -72,3 +72,6 @@ ut/report/**
 ut/coverage/**
 # allow all gtest files to be uploaded
 !google_test/**
+# ignore coverage report
+**/coverage_report/**
+*.info
