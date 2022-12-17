@@ -20,9 +20,31 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 *************************************************************/
 
 #include <iostream>
-#include "test_module_2.h"
+#include "module_a.h"
 
-void AddModule2(void)
+ModuleA::ModuleA(const ParaPtr& ptr)
 {
-    std::cout << "module 2 is added! \n";
+    ParsePara(ptr);
+}
+
+bool ModuleA::ParsePara(const ParaPtr& ptr)
+{
+    std::string name = "add";
+    auto res = GetParaData(ptr, name, 0);
+    return true;
+}
+
+void ModuleA::FuncA(void)
+{
+    std::cout<<"module A func a\n";
+}
+
+void ModuleA::FuncB(void)
+{
+    std::cout<<"module A func b\n";
+}
+
+void ModuleA::FuncC(void)
+{
+    std::cout<<"module A func c\n";
 }

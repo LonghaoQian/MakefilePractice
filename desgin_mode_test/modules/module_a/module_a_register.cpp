@@ -19,9 +19,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 *************************************************************/
 
-#ifndef TEST_MODULE_2_H
-#define TEST_MODULE_2_H
+#include "model_register.h"
+#include "module_a.h"
 
-void AddModule2(void);
-
-#endif
+REG_MODEL_CREATE_FUNC(0, ModuleA)

@@ -19,9 +19,24 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 *************************************************************/
 
-#ifndef TEST_MODULE_1_H
-#define TEST_MODULE_1_H
+#include "parameter.h"
 
-void AddModule1(void);
 
-#endif
+std::vector<double> GetParaData(const ParaPtr& paraPtr,
+                                const std::string& name,
+                                unsigned int level)
+{
+    // get data by using BFS
+    if (paraPtr == nullptr) {
+        return {};
+    }
+    if (paraPtr->name.empty())
+    {
+        return {};
+    }
+    // TO DO: delete this later
+    if (paraPtr->name != name && paraPtr->level != level) {
+        return {};
+    }
+    return {};
+}

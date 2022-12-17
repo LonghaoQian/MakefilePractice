@@ -19,15 +19,93 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 *************************************************************/
 
-#include "module_register.h"
-#include "test_module_0.h"
+//#include "module_register.h"
+//#include "test_module_0.h"
 #include <vector>
 #include <iostream>
-using namespace ModelBuilder;
+#include <memory>
+//using namespace ModelBuilder;
+#include <functional>
+#include <map>
+#include "model_register.h"
+class Base {
+public:
+    Base() = default;
+    virtual ~Base() = default;
+    virtual void Disp(void) = 0;
+};
+
+class Foo : public Base {
+public:
+    explicit Foo(int i) { std::cout<<"Foo constructed ~"<<i<<'\n'; }
+    void Disp(void) override { std::cout<<"Foo disp called ~\n"; } 
+    ~Foo() = default;
+};
+
+class Bar: public Base {
+public:
+    explicit Bar(int i) { std::cout<<"Bar constructed ~"<<i<<'\n'; }
+    void Disp(void) override { std::cout<<"Bar disp called ~\n"; } 
+    ~Bar() = default;
+};
+
+using BaseCreateFunc = std::function<std::unique_ptr<Base>(int)>;
+
+class InstanceFactory {
+public:
+    InstanceFactory() = default;
+    ~InstanceFactory() = default;
+    static InstanceFactory& Instance() { 
+        static InstanceFactory factory;
+        return factory;}
+    void ResigerFunc(unsigned int index, BaseCreateFunc& func) {
+        container[index] = func;
+    }
+    BaseCreateFunc& GetCreateFunc(unsigned int index) {
+        return container[index];
+    }
+private:
+    std::map<int, BaseCreateFunc> container;
+};
+
+class RegistCreaterFunc {
+public:
+    RegistCreaterFunc(unsigned int index, BaseCreateFunc func) {
+        InstanceFactory::Instance().ResigerFunc(index, func);
+    }
+};
+
+#define REG_CREATE_FUNC(index, className) \
+    static RegistCreaterFunc g_resiger##className##func(index, [](int i) { return std::make_unique<className>(i); });
+
+REG_CREATE_FUNC(0, Foo)
+REG_CREATE_FUNC(1, Bar)
 
 int main(void)
 {
     // BlockResiger::CheckFuncList().AddToFuncList(0, new BlockBuilderA());
-    BlockResiger::CheckFuncList().CallFuncList(0);
+    // BlockResiger::CheckFuncList().CallFuncList(0);
+    /*
+    BaseCreateFunc fun1 = [](int i) { return std::make_unique<Foo>(i); };
+    BaseCreateFunc fun2 = [](int i) { return std::make_unique<Bar>(i); };
+
+    */
+    auto func1 = InstanceFactory::Instance().GetCreateFunc(0);
+    auto func2 = InstanceFactory::Instance().GetCreateFunc(1);
+    auto res1 = func1(9);
+    auto res2 = func2(10);
+
+    res1->Disp();
+    res2->Disp();
+
+    auto para_a = std::make_unique<ModelPara>();
+    auto res = ModelFactory::Instance().GetCreateFunc(0);
+    if (res != nullptr) {
+        auto module_a = res(para_a);
+        module_a->FuncA();
+        module_a->FuncB();
+    } else {
+        std::cout<<"fun 0 undefined !\n";
+    }
     return 0;
 }

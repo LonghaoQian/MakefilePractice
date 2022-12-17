@@ -19,41 +19,19 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 *************************************************************/
 
-#include "module_register.h"
-#include <iostream>
+#ifndef MODULE_BASE_H
+#define MODULE_BASE_H
 
-namespace ModelBuilder
-{
-BlockBuilderBase::BlockBuilderBase() {}
+class ModuleBase {
+public:
+    ModuleBase() = default;
+    virtual ~ModuleBase() = default;
+    virtual void FuncA(void) = 0;
+    virtual void FuncB(void) = 0;
+    virtual void FuncC(void) = 0;
+    bool GetParaCheck(void) { return paraOk; }
+private:
+    bool paraOk{false};
+};
 
-BlockBuilderBase::~BlockBuilderBase() {}
-
-BlockResiger::BlockResiger()
-{
-    // registor function table
-    std::cout << "resgister constructor is called. \n";
-}
-BlockResiger::~BlockResiger()
-{
-    for (auto it = funcList.begin(); it != funcList.end(); it++) {
-        delete it->second;
-    }
-}
-BlockResiger &BlockResiger::CheckFuncList()
-{
-    static BlockResiger br;
-    return br;
-}
-void BlockResiger::CallFuncList(int idx)
-{
-    if (funcList.empty()) {
-        std::cout << "no method to call! \n";
-        return;
-    }
-    funcList[idx]->AddBlock();
-}
-void BlockResiger::AddToFuncList(int idx, BlockBuilderBase *func)
-{
-    funcList[idx] = func;
-}
-}  // namespace ModelBuilder
+#endif

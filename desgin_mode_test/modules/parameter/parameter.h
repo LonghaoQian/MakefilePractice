@@ -19,20 +19,25 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 *************************************************************/
 
-#ifndef TEST_MODULE_0_H
-#define TEST_MODULE_0_H
+#ifndef PARAMETER_H
+#define PARAMETER_H
 
-#include "module_register.h"
+#include <vector>
+#include <memory>
+#include <string>
 
-namespace ModelBuilder
-{
-class BlockBuilderA : public BlockBuilderBase
-{
-   public:
-    BlockBuilderA();
-    ~BlockBuilderA();
-    virtual void AddBlock() override;
+struct ModelPara;
+
+using ParaPtr = std::unique_ptr<ModelPara>;
+
+// store parameters in a linked list
+struct ModelPara {
+    std::string name; // current field name
+    unsigned int level{0}; // current level of the tree
+    std::vector<double> data{0}; // data field
+    std::vector<ParaPtr> child; // pointers to child field
 };
-}  // namespace ModelBuilder
+
+std::vector<double> GetParaData(const ParaPtr& paraPtr, const std::string& name, unsigned int level);
 
 #endif

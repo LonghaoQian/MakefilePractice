@@ -20,9 +20,24 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 *************************************************************/
 
 #include <iostream>
-#include "test_module_1.h"
+#include "model_register.h"
 
-void AddModule1(void)
+ModelFactory& ModelFactory::Instance()
 {
-    std::cout << "module 1 is added! \n";
+    static ModelFactory factory;
+    return factory;
+}
+
+void ModelFactory::ResigerFunc(unsigned int index, ModuleCreateFunc& func)
+{
+    std::cout<<"func "<<index<<" registered!\n";
+    container[index] = func;
+}
+
+ModuleCreateFunc& ModelFactory::GetCreateFunc(unsigned int index)
+{
+    if (container.find(index) == container.end()) {
+        return invalidFunc;
+    }
+    return container[index];
 }

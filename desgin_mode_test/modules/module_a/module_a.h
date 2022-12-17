@@ -19,15 +19,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 *************************************************************/
 
-#include <iostream>
-#include "test_module_0.h"
+#ifndef MODULE_A_H
+#define MODULE_A_H
 
-namespace ModelBuilder
-{
-BlockBuilderA::BlockBuilderA() {}
-BlockBuilderA::~BlockBuilderA() {}
-void BlockBuilderA::AddBlock()
-{
-    std::cout << "module 0 is added! \n";
-}
-}  // namespace ModelBuilder
+#include "module_base.h"
+#include "parameter.h"
+
+class ModuleA : public ModuleBase {
+public:
+    explicit ModuleA(const ParaPtr& ptr);
+    ~ModuleA() = default;
+    void FuncA(void) override;
+    void FuncB(void) override;
+    void FuncC(void) override;
+private:
+    bool ParsePara(const ParaPtr& ptr);
+};
+
+#endif
