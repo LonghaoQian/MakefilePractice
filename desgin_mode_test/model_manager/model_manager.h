@@ -19,23 +19,26 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 *************************************************************/
 
-#ifndef MODULE_BASE_H
-#define MODULE_BASE_H
+#ifndef MODEL_MANAGER_H
+#define MODEL_MANAGER_H
 
+#include <vector>
 #include <memory>
+#include "module_base.h"
 
-class ModuleBase {
+class ModelManager {
 public:
-    ModuleBase() = default;
-    virtual ~ModuleBase() = default;
-    virtual void FuncA(void) = 0;
-    virtual void FuncB(void) = 0;
-    virtual void FuncC(void) = 0;
-    bool GetParaCheck(void) { return paraOk; }
+    ModelManager() = default;
+    ~ModelManager() = default;
+    void Preprocess(void);
+    void ConnectModule(void);
+    void AddModule(ModuleBasePtr& moduelPtr);
+    void ResetAllModule(void);
+    std::vector<ModuleBasePtr>::iterator begin(void);
+    std::vector<ModuleBasePtr>::iterator end(void);
+    bool empty(void);
 private:
-    bool paraOk{false};
+    std::vector<ModuleBasePtr> moduleContainer;
 };
-
-using ModuleBasePtr = std::unique_ptr<ModuleBase>;
 
 #endif

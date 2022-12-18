@@ -18,24 +18,34 @@ if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 *************************************************************/
+#include <utility>
+#include "model_manager.h"
 
-#ifndef MODULE_BASE_H
-#define MODULE_BASE_H
+void ModelManager::AddModule(ModuleBasePtr& moduelPtr)
+{
+    moduleContainer.emplace_back(std::move(moduelPtr));
+}
 
-#include <memory>
+void ModelManager::ResetAllModule(void)
+{
+    for (auto itr = begin(); itr != end(); itr++) {
+        if ((*itr) != nullptr) {
+            (*itr)->FuncA();
+        }
+    }
+}
 
-class ModuleBase {
-public:
-    ModuleBase() = default;
-    virtual ~ModuleBase() = default;
-    virtual void FuncA(void) = 0;
-    virtual void FuncB(void) = 0;
-    virtual void FuncC(void) = 0;
-    bool GetParaCheck(void) { return paraOk; }
-private:
-    bool paraOk{false};
-};
+std::vector<ModuleBasePtr>::iterator ModelManager::begin(void)
+{
+    return moduleContainer.begin();
+}
 
-using ModuleBasePtr = std::unique_ptr<ModuleBase>;
+std::vector<ModuleBasePtr>::iterator ModelManager::end(void)
+{
+    return moduleContainer.end();
+}
 
-#endif
+bool ModelManager::empty(void)
+{
+    return moduleContainer.empty();
+}

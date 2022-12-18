@@ -28,6 +28,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <functional>
 #include <map>
 #include "model_register.h"
+#include "model_manager.h"
+#include "solver.h"
+
 class Base {
 public:
     Base() = default;
@@ -88,8 +91,6 @@ int main(void)
     /*
     BaseCreateFunc fun1 = [](int i) { return std::make_unique<Foo>(i); };
     BaseCreateFunc fun2 = [](int i) { return std::make_unique<Bar>(i); };
-
-    */
     auto func1 = InstanceFactory::Instance().GetCreateFunc(0);
     auto func2 = InstanceFactory::Instance().GetCreateFunc(1);
     auto res1 = func1(9);
@@ -97,15 +98,25 @@ int main(void)
 
     res1->Disp();
     res2->Disp();
+    */
 
+    ModelManager system_0;
     auto para_a = std::make_unique<ModelPara>();
     auto res = ModelFactory::Instance().GetCreateFunc(0);
+    SolverPara para;
+    Solver solver1(para);
+
+
     if (res != nullptr) {
         auto module_a = res(para_a);
-        module_a->FuncA();
-        module_a->FuncB();
+        system_0.AddModule(module_a);
+        module_a = res(para_a);
+        system_0.AddModule(module_a);
+        system_0.ResetAllModule();
+        solver1.UpdateStep(system_0);
     } else {
         std::cout<<"fun 0 undefined !\n";
     }
+
     return 0;
 }

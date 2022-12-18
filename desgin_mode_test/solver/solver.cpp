@@ -19,23 +19,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 *************************************************************/
 
-#ifndef MODULE_BASE_H
-#define MODULE_BASE_H
+#include "solver.h"
 
-#include <memory>
+Solver::Solver(const SolverPara& para_)
+{
+    para = para_;
+}
 
-class ModuleBase {
-public:
-    ModuleBase() = default;
-    virtual ~ModuleBase() = default;
-    virtual void FuncA(void) = 0;
-    virtual void FuncB(void) = 0;
-    virtual void FuncC(void) = 0;
-    bool GetParaCheck(void) { return paraOk; }
-private:
-    bool paraOk{false};
-};
-
-using ModuleBasePtr = std::unique_ptr<ModuleBase>;
-
-#endif
+void Solver::UpdateStep(ModelManager& system)
+{
+    for (auto itr = system.begin(); itr != system.end(); itr++) {
+        if ((*itr) != nullptr) {
+            (*itr)->FuncB();
+        }
+    }
+}

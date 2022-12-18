@@ -3,10 +3,10 @@ target_include_directories(${TGT_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-set(solver_src_list
-    ${CMAKE_CURRENT_SOURCE_DIR}/solver.cpp
+set(model_manager_src_list
+    ${CMAKE_CURRENT_SOURCE_DIR}/model_manager.cpp
 )
 
 target_sources(${TGT_NAME}
                PRIVATE
-               ${solver_src_list})
+               ${model_manager_src_list})
