@@ -21,6 +21,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <iostream>
 #include "module_a.h"
+#include "model_register.h"
+
+REG_MODEL_CREATE_FUNC(0, ModuleA)
 
 ModuleA::ModuleA(const ParaPtr& ptr)
 {

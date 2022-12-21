@@ -4,7 +4,6 @@ target_include_directories(${TGT_NAME}
 )
 
 set(module_a_src_list
-    ${CMAKE_CURRENT_SOURCE_DIR}/module_a_register.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/module_a.cpp
 )
 
