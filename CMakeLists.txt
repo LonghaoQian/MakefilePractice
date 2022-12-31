@@ -42,5 +42,24 @@ add_executable(test5 src/rotation_test.cpp)
 target_link_libraries(test5 PUBLIC math_utils -lasan)
 target_compile_options(test5 PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
                       $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)
+
+add_executable(test6 src/rref_test.cpp)
+target_link_libraries(test6 PUBLIC -lasan)
+target_compile_options(test6 PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
+                        $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)
 #----------------build test target -----------------------
 add_subdirectory(ut)
+
+aux_source_directory(./src SRCLIST)
+# extract file name
+set(namelist "")
+
+foreach(x IN LISTS SRCLIST)
+    message(STATUS "file: " ${x})
+    get_filename_component(targetname ${x} NAME_WE ABSOLUTE)
+    list(APPEND namelist ${targetname})
+endforeach()
+
+foreach(x IN LISTS namelist)
+    message(STATUS "targetname: " ${x})
+endforeach()
