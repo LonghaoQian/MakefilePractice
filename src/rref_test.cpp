@@ -22,57 +22,59 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <iostream>
 #include <vector>
 
-namespace {
-    size_t consFuncCounter{0};
-    size_t moveFuncCounter{0};
-    size_t copyConsFuncCounter{0};
+namespace
+{
+// function countre recording number of times each constructor is called
+size_t consFuncCounter{0};
+size_t moveFuncCounter{0};
+size_t copyConsFuncCounter{0};
 // test move semantics
-class A {
-public:
-    explicit A(size_t size_) {
+class A
+{
+   public:
+    explicit A(size_t size_)
+    {
         p = new int[size_];
         size = size_;
-        std::cout<<"A constructor called! \n";
+        std::cout << "A constructor called! \n";
         consFuncCounter++;
     }
-    ~A(void) {
-        delete [] p;
-        std::cout<<"A destructor called! \n";
+    ~A(void)
+    {
+        delete[] p;
+        std::cout << "A destructor called! \n";
     }
-    size_t GetSize(void) const {
-        return size;
-    }
-    void ResetSize(void) {
-        size = 0;
-    }
-    int& operator[](size_t index) {
-        return p[index];
-    }
-    int GetElement(size_t index) const {
+    size_t GetSize(void) const { return size; }
+    void ResetSize(void) { size = 0; }
+    int &operator[](size_t index) { return p[index]; }
+    int GetElement(size_t index) const
+    {
         if (p == nullptr || index >= size) {
             return 0;
         }
         return p[index];
     }
     // copy constructor
-    A(const A& obj) {
+    A(const A &obj)
+    {
         p = new int[obj.GetSize()];
         for (size_t i = 0; i < obj.GetSize(); i++) {
             p[i] = obj.GetElement(i);
         }
         size = obj.GetSize();
-        std::cout<<"A copy constructor called! \n";
+        std::cout << "A copy constructor called! \n";
         copyConsFuncCounter++;
     }
     // copy assignment
-    A& operator=(const A& obj) {
-        std::cout<<"A assignment called! \n";
+    A &operator=(const A &obj)
+    {
+        std::cout << "A assignment called! \n";
         // check whether self replication
         if (this == &obj) {
             return *this;
         }
         // delete original data and reassign data
-        delete [] p;
+        delete[] p;
         size = obj.GetSize();
         p = new int[size];
         for (size_t i = 0; i < size; i++) {
@@ -83,20 +85,22 @@ public:
 
     // move constructor
     // inf noexcept is not added, then it is not called when vector resizes
-    A(A&& obj) noexcept {
-        std::cout<<"move constructor called\n";
+    A(A &&obj) noexcept
+    {
+        std::cout << "move constructor called\n";
         this->size = obj.GetSize();
         this->p = obj.p;
         obj.p = nullptr;
         moveFuncCounter++;
     }
     // move assignment
-    A& operator=(A&& obj) noexcept {
-        std::cout<<"move assginment called\n";
+    A &operator=(A &&obj) noexcept
+    {
+        std::cout << "move assginment called\n";
         if (this == &obj) {
             return *this;
         }
-        delete [] p;
+        delete[] p;
         this->size = obj.GetSize();
         this->p = obj.p;
         obj.p = nullptr;
@@ -104,47 +108,85 @@ public:
         return *this;
     }
     int *p{nullptr};
-private:
+
+   private:
     size_t size{0};
 };
 
-/*
-A TestFunc(void)
+// regular function with lvalue args only accepts lvalue as parameter
+void TestFunc1(A &input)
 {
-    A obj1(10);
-    return obj1;
+    A d(input);
+    std::cout << "func1 -lvalue- is called \n";
 }
-*/
-void TestFunc2(A&& input)
+void TestFunc2(A &input)
 {
-    //A d(input); if forward is not used, then copy constructor is called
-    A d(std::forward<A>(input)); // if forward is used, then move constructor is called
-    std::cout<<"size of d is: "<<d.GetSize()<<'\n';
+    A d(input);
+    std::cout << "func2 -lvalue- is called \n";
+}
+// regular function with rvalue args only accepts rvalue as parameter
+void TestFunc2(A &&input)
+{
+    // A d(input); if forward is not used, then copy constructor is called
+    A d(std::forward<A>(
+        input));  // if forward is used, then move constructor is called
+    std::cout << "size of d is: " << d.GetSize() << '\n';
+    std::cout << "func2 -rvalue- is called \n";
 }
 
+template <typename T>
+void TemplateTestFunc(T &input)
+{
+    T d(input);
+    std::cout << "template test func -lvalue- is called \n";
 }
+
+template <typename T>
+void TemplateTestFunc(T &&input)
+{
+    T d(input);
+    std::cout << "template test func -rvalue- is called \n";
+}
+
+template <typename TT>
+void TemplateTestFuncForward(TT &&input)
+{
+    // TestFunc2(std::forward<TT>(input));
+    TT d(std::forward<TT>(
+        input));  // this is the key to achieve accepting both r and l value
+    std::cout << "TemplateTestFuncForward is called \n";
+    std::cout << "size of d is: " << d.GetSize() << '\n';
+}
+
+}  // namespace
 int main(void)
 {
-    //A obj1(10);
-    //obj1[0] = 3;
-    //obj1[3] = 4;
-    //std::cout<<obj1[0]<<" "<<obj1[3]<<'\n';
-    //auto obj3 = TestFunc();
-    //std::cout<<obj3.GetSize()<<'\n';
-    ::TestFunc2(::A(20));
+    A obj1(30);
+    ::TestFunc2(::A(20));  // rvalue version is called
+    ::TestFunc2(obj1);     // lvalue version is called
+    //::TestFunc1(::A(20));  // this causes a compilation error
+    ::TestFunc1(obj1);
+    ::TemplateTestFunc(obj1);
+    ::TemplateTestFunc(::A(20));  // although rvalue version is called here,
+                                  // copy constuctor is still used
+    // for universal reference to work, one must let compiler to deduce
+    // parameter
+    ::TemplateTestFuncForward(obj1);
+    ::TemplateTestFuncForward(::A(20));
+    // test move semantics with containers
     std::vector<::A> containerA;
     // containerA.reserve(3);
-    //containerA.push_back(A(20));
-    //containerA.push_back(A(40));
-    //containerA.push_back(A(30));
+    // containerA.push_back(A(20));
+    // containerA.push_back(A(40));
+    // containerA.push_back(A(30));
     // containerA.emplace_back(A(20));
     // containerA.emplace_back(A(40));
     // containerA.emplace_back(A(30));
     containerA.emplace_back(20);
     containerA.emplace_back(40);
     containerA.emplace_back(30);
-    std::cout<<"construct func called "<<::consFuncCounter<<
-        ", move constructor func called "<<::moveFuncCounter<<
-        ", copy constructor called "<<copyConsFuncCounter<<'\n';
+    std::cout << "construct func called " << ::consFuncCounter
+              << ", move constructor func called " << ::moveFuncCounter
+              << ", copy constructor called " << copyConsFuncCounter << '\n';
     return 0;
 }

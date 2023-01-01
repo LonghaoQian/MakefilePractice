@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.15)
 project(cmake_template VERSION 1.0.0 LANGUAGES C CXX)
 #-------------------- set compile options----------------
 set(CMAKE_CXX_STANDARD 17)
@@ -46,6 +46,11 @@ target_compile_options(test5 PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
 add_executable(test6 src/rref_test.cpp)
 target_link_libraries(test6 PUBLIC -lasan)
 target_compile_options(test6 PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
+                        $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)
+
+add_executable(pref_test src/pref_test.cpp)
+target_link_libraries(pref_test PUBLIC -lasan)
+target_compile_options(pref_test PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
                         $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)
 #----------------build test target -----------------------
 add_subdirectory(ut)
