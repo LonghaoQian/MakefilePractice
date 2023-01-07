@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.15)
 project(cmake_template VERSION 1.0.0 LANGUAGES C CXX)
 #-------------------- set compile options----------------
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED True)
 set(MSVC_FLAGS "/W4;/MP;$<$<CONFIG:DEBUG>:/ZI;/Od>$<$<CONFIG:RELEASE>:/O2>")
 set(GNU_FLAGS
     "-Wall;-Werror;-Wextra;-Wpedantic;$<$<CONFIG:DEBUG>:-O0;-g;-fno-omit-frame-pointer;-fsanitize=address>$<$<CONFIG:RELEASE>:-O3>;"
@@ -51,6 +53,11 @@ target_compile_options(test6 PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
 add_executable(pref_test src/pref_test.cpp)
 target_link_libraries(pref_test PUBLIC -lasan)
 target_compile_options(pref_test PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
+                        $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)
+
+add_executable(mystring_test src/custom_string.cpp)
+target_link_libraries(mystring_test PUBLIC -lasan)
+target_compile_options(mystring_test PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
                         $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)
 #----------------build test target -----------------------
 add_subdirectory(ut)
