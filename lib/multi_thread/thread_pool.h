@@ -19,8 +19,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 *************************************************************/
 
-#ifndef RUNGE_KUTTA_H
-#define RUNGE_KUTTA_H
+#ifndef THREAD_POOL
+#define THREAD_POOL
 
 
 

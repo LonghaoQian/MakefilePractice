@@ -1,2 +1,4 @@
 add_subdirectory(graph_analysis_toolbox)
 add_subdirectory(math_utils)
+add_subdirectory(numerical_solver)
+# add_subdirectory(thread_pool)

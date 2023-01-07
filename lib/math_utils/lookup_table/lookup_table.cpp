@@ -22,8 +22,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "lookup_table.h"
 namespace MathAuxiliary
 {
-std::pair<Uint32, Uint32> BinarySearchVector(bool ascending, const VectorXd &p,
-                                             Float64 target)
+std::pair<uint32_t, uint32_t> BinarySearchVector(bool ascending, const VectorXd &p,
+                                             double target)
 {
     if (p.size() <= 1) {
         return {0, 0};
@@ -44,9 +44,9 @@ std::pair<Uint32, Uint32> BinarySearchVector(bool ascending, const VectorXd &p,
             return {p.size() - 1, p.size() - 1};
         }
     }
-    Uint32 start = 0;
-    Uint32 end = p.size() - 1;
-    Uint32 mid = 0;
+    uint32_t start = 0;
+    uint32_t end = p.size() - 1;
+    uint32_t mid = 0;
     while (start < end - 1) {
         mid = (start + end) / 2;
         if (ascending) {
@@ -63,13 +63,13 @@ std::pair<Uint32, Uint32> BinarySearchVector(bool ascending, const VectorXd &p,
             }
         }
     }
-    return {start, end};
+    return { start, end };
 }
 
 // linear interpolation for vector objects
 VectorXd LinearInterpolation1D(const VectorXd &dataStart,
-                               const VectorXd &dataEnd, Float64 refStart,
-                               Float64 refEnd, Float64 target)
+                               const VectorXd &dataEnd, double refStart,
+                               double refEnd, double target)
 {
     if (abs(refStart - refEnd) < FLOAT64_TOLERANCE) {
         // TO DO: add log to complain about this exception
