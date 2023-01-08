@@ -22,6 +22,9 @@ else()
 endif()
 # display build type
 message("-- build type is set to " ${CMAKE_BUILD_TYPE})
+# add utility functions
+include(cmake/utils.cmake)
+
 #--------------- build target --------------------------
 add_executable(test1 src/tarjan_method_test.cpp)
 target_link_libraries(test1 PUBLIC GraphAnalysis -lasan)
@@ -44,34 +47,7 @@ add_executable(test5 src/rotation_test.cpp)
 target_link_libraries(test5 PUBLIC math_utils -lasan)
 target_compile_options(test5 PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
                       $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)
-
-add_executable(test6 src/rref_test.cpp)
-target_link_libraries(test6 PUBLIC -lasan)
-target_compile_options(test6 PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
-                        $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)
-
-add_executable(pref_test src/pref_test.cpp)
-target_link_libraries(pref_test PUBLIC -lasan)
-target_compile_options(pref_test PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
-                        $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)
-
-add_executable(mystring_test src/custom_string.cpp)
-target_link_libraries(mystring_test PUBLIC -lasan)
-target_compile_options(mystring_test PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
-                        $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)
+# ---------------build tutorial ---------------
+add_subdirectory(tutorial)
 #----------------build test target -----------------------
 add_subdirectory(ut)
-
-aux_source_directory(./src SRCLIST)
-# extract file name
-set(namelist "")
-
-foreach(x IN LISTS SRCLIST)
-    message(STATUS "file: " ${x})
-    get_filename_component(targetname ${x} NAME_WE ABSOLUTE)
-    list(APPEND namelist ${targetname})
-endforeach()
-
-foreach(x IN LISTS namelist)
-    message(STATUS "targetname: " ${x})
-endforeach()
