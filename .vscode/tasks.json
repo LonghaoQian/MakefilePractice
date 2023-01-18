@@ -40,6 +40,16 @@
           "isDefault": true
         },
         "problemMatcher": []
+      },
+      {
+        "label": "05 install",
+        "type": "shell",
+        "command": "./install.sh",
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "problemMatcher": []
       }
     ]
   }

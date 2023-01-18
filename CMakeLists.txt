@@ -51,3 +51,32 @@ target_compile_options(test5 PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
 add_subdirectory(tutorial)
 #----------------build test target -----------------------
 add_subdirectory(ut)
+
+#--------- instal graph analysis toolbox--------------
+
+set(CMAKE_PREFIX_PATH "$ENV{HOME}/local_package")
+message(STATUS ${CMAKE_PREFIX_PATH})
+
+# scan for all header files
+file(GLOB_RECURSE graphics_lib_header_list ${CMAKE_CURRENT_SOURCE_DIR}/lib/graph_analysis_toolbox/*.h)
+foreach(filename ${graphics_lib_header_list})
+    message(STATUS "header file is: " ${filename})
+endforeach()
+
+# add lib config file
+include(CMakePackageConfigHelpers)
+
+#set_target_properties(mylib PROPERTIES PUBLIC_HEADER  "${CMAKE_CURRENT_SOURCE_DIR}/graph_analysis_toolbox/dijkstra/Dijkstra.h")
+install(TARGETS GraphAnalysis
+        EXPORT MyGraphAnalysis
+        ARCHIVE DESTINATION lib)
+install(FILES ${graphics_lib_header_list}
+        DESTINATION include)
+        #install (
+#    FILES
+#    ${CMAKE_CURRENT_BINARY_DIR}/${PackageName}Config.cmake
+#    ${CMAKE_CURRENT_BINARY_DIR}/${PackageName}ConfigVersion.cmake
+#    DESTINATION ${dest}
+#)
+#get_target_property(public_headers GraphAnalysis PUBLIC_HEADER)
+#message(STATUS ${public_headers})
