@@ -24,9 +24,39 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <iostream>
 #include <vector>
 #include <thread>
-#include <condition_variable>
+#include <algorithm>
+#include <chrono>
+#include "msg_queue.h"
 
 int main(void)
 {
+    ThreadSafeQueue<uint32_t> msgQueue;
+    std::vector<uint32_t> data = { 0, 2, 4, 5, 7 };
+
+    std::thread consumer([&](void){
+        bool flag = true;
+        while(flag) {
+            uint32_t temp;
+            msgQueue.WaitAndPop(temp);
+            std::cout<<"get value: "<<temp<<'\n';
+            if (temp == data.back()) {
+                flag = false;
+                std::cout<<"exit... \n";
+            }
+        }
+    });
+    std::cout<<"consumer started! \n";
+    // wait for 1 second
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    // start producer
+    std::thread producer([&](void){
+        for(auto& t : data) {
+            msgQueue.Push(t);
+        }
+    });
+    std::cout<<"producer started! \n";
+    producer.join();
+    consumer.join();
     return 0;
 }

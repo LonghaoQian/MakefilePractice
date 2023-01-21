@@ -26,15 +26,33 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <condition_variable>
 #include <queue>
 
-template<typename T>
+// methods of template class must be defined in the same .h file
+template<class T>
 class ThreadSafeQueue {
 public:
     ThreadSafeQueue(void) = default;
     ~ThreadSafeQueue(void) = default;
-    void Push(T new_value);
-    void WaitAndPop(T& value);
-    void TryPop(T& value);
-    void Empty(void) const;
+    void Push(T new_value) {
+            std::lock_guard<std::mutex> lk(mut);
+            dataQueue.push(std::move(new_value));
+            dataCond.notify_one();
+    }
+    void WaitAndPop(T& value) {
+        std::unique_lock<std::mutex> lk(mut);
+        dataCond.wait(lk, [this]{ return !dataQueue.empty(); });
+        value = std::move(dataQueue.front());
+        dataQueue.pop();
+    }
+    bool TryPop(T& value) {
+        std::lock_guard<std::mutex> lk(mut);
+        if(dataQueue.empty()) { return false; }
+        value = std::move(dataQueue.front());
+        dataQueue.pop();
+    }
+    bool Empty(void) const {
+        std::lock_guard<std::mutex> lk(mut);
+        return dataQueue.empty();
+    }
 private:
     mutable std::mutex mut;
     std::queue<T> dataQueue;
