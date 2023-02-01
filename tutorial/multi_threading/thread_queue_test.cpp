@@ -19,4 +19,45 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 *************************************************************/
 
+#include <chrono>
+#include <iostream>
 #include "thread_pool.h"
+
+class A {
+public:
+    A() = default;
+    ~A() = default;
+    void Func(void) {
+        i = i + 3;
+    }
+    int i{0};
+};
+
+class B {
+public:
+    B() = default;
+    ~B() = default;
+    void Func(void) {
+        i = i + 5;
+    }
+    int i{0};
+};
+
+
+int main(void)
+{
+    ThreadPool tPool(3);
+    tPool.Init();
+    A a1;
+    B b1;
+    std::function<void()> func1 = [&a1](){ a1.Func(); };
+    std::function<void()> func2 = [&b1](){ b1.Func(); };
+    tPool.Commit(func1);
+    tPool.Commit(func2);
+    tPool.Commit(func1);
+    tPool.Commit(func1);
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::cout<<"a1 i: "<<a1.i<<'\n';
+    std::cout<<"b1 i: "<<b1.i<<'\n';
+    return 0;
+}
