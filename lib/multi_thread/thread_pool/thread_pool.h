@@ -84,4 +84,9 @@ private:
     static const size_t COUNT = 8;
 };
 
+class ThreadPoolWithArgs {
+private:
+public:
+};
+
 #endif

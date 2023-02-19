@@ -33,6 +33,34 @@ Vector3d Veemap(const Matrix3d &cross_matrix)
     vector(VECTOR_Z) = -cross_matrix(0, 1);
     return vector;
 }
+
+void Veemap(const Matrix3d &cross_matrix, Vector3d &vector)
+{
+    vector(VECTOR_X) = -cross_matrix(1, 2);
+    vector(VECTOR_Y) = cross_matrix(0, 2);
+    vector(VECTOR_Z) = -cross_matrix(0, 1);
+}
+
+void Hatmap(const Vector3d &vector, Matrix3d &cross_matrix)
+{
+    /*
+    r^x = [0 -r3 r2;
+    r3 0 -r1;
+    -r2 r1 0]
+    */
+    cross_matrix(0, 0) = 0.0;
+    cross_matrix(0, 1) = -vector(VECTOR_Z);
+    cross_matrix(0, 2) = vector(VECTOR_Y);
+
+    cross_matrix(1, 0) = vector(VECTOR_Z);
+    cross_matrix(1, 1) = 0.0;
+    cross_matrix(1, 2) = -vector(VECTOR_X);
+
+    cross_matrix(2, 0) = -vector(VECTOR_Y);
+    cross_matrix(2, 1) = vector(VECTOR_X);
+    cross_matrix(2, 2) = 0.0;
+}
+
 Matrix3d Hatmap(const Vector3d &vector)
 {
     /*
@@ -55,15 +83,15 @@ Matrix3d Hatmap(const Vector3d &vector)
     return cross_matrix;
 }
 
-RotationMatrix RotationMatrixFromRoll(Float64 phi)
+RotationMatrix RotationMatrixFromRoll(double phi)
 {
     /*
     R21 = [1 0 0;
            0 cphi sphi;
            0 -sphi cphi];
     */
-    Float64 cphi = cos(phi);
-    Float64 sphi = sin(phi);
+    double cphi = cos(phi);
+    double sphi = sin(phi);
     RotationMatrix R21;
     R21.setZero();
     R21(0, 0) = 1.0;
@@ -73,15 +101,33 @@ RotationMatrix RotationMatrixFromRoll(Float64 phi)
     R21(2, 1) = -sphi;
     return R21;
 }
-RotationMatrix RotationMatrixFromPitch(Float64 theta)
+
+void RotationMatrixFromRoll(double phi, RotationMatrix &R21)
+{
+    /*
+    R21 = [1 0 0;
+           0 cphi sphi;
+           0 -sphi cphi];
+    */
+    double cphi = cos(phi);
+    double sphi = sin(phi);
+    R21.setZero();
+    R21(0, 0) = 1.0;
+    R21(1, 1) = cphi;
+    R21(2, 2) = cphi;
+    R21(1, 2) = sphi;
+    R21(2, 1) = -sphi;
+}
+
+RotationMatrix RotationMatrixFromPitch(double theta)
 {
     /*
     R21 = [ctheta 0 -stheta;
           0   1   0;
           stheta 0 ctheta]
     */
-    Float64 ctheta = cos(theta);
-    Float64 stheta = sin(theta);
+    double ctheta = cos(theta);
+    double stheta = sin(theta);
     RotationMatrix R21;
     R21.setZero();
     R21(0, 0) = ctheta;
@@ -92,15 +138,15 @@ RotationMatrix RotationMatrixFromPitch(Float64 theta)
     return R21;
 }
 
-RotationMatrix RotationMatrixFromYaw(Float64 psi)
+RotationMatrix RotationMatrixFromYaw(double psi)
 {
     /*
     R21 = [cpsi spsi 0;
            -spsi cpsi 0;
            0   0  1]
     */
-    Float64 cpsi = cos(psi);
-    Float64 spsi = sin(psi);
+    double cpsi = cos(psi);
+    double spsi = sin(psi);
     RotationMatrix R21;
     R21.setZero();
     R21(0, 0) = cpsi;
@@ -111,10 +157,10 @@ RotationMatrix RotationMatrixFromYaw(Float64 psi)
     return R21;
 }
 
-Matrix<Float64, 9, 1> ConvertRotationMatrixToVector(
-    const Matrix<Float64, 3, 3> &R)
+Matrix<double, 9, 1> ConvertRotationMatrixToVector(
+    const Matrix<double, 3, 3> &R)
 {
-    Matrix<Float64, 9, 1> v;
+    Matrix<double, 9, 1> v;
 
     v.block<3, 1>(0, 0) = R.block<3, 1>(0, 0);
     v.block<3, 1>(3, 0) = R.block<3, 1>(0, 1);
@@ -122,7 +168,7 @@ Matrix<Float64, 9, 1> ConvertRotationMatrixToVector(
     return v;
 }
 
-RotationMatrix ConvertVectorToRotationMatrix(const Matrix<Float64, 9, 1> &v)
+RotationMatrix ConvertVectorToRotationMatrix(const Matrix<double, 9, 1> &v)
 {
     RotationMatrix R;
     R.block<3, 1>(0, 0) = v.block<3, 1>(0, 0);
@@ -138,43 +184,43 @@ Vector3d GetEulerAngleFromQuaterion(const Quaterion &quaterion)
      */
     // roll (x-axis rotation)
     Vector3d Euler;
-    Float64 sinr_cosp = +2.0 * (quaterion(QUAT_W) * quaterion(QUAT_X) +
+    double sinr_cosp = +2.0 * (quaterion(QUAT_W) * quaterion(QUAT_X) +
                                 quaterion(QUAT_Y) * quaterion(QUAT_Z));
-    Float64 cosr_cosp = +1.0 - 2.0 * (quaterion(QUAT_X) * quaterion(QUAT_X) +
+    double cosr_cosp = +1.0 - 2.0 * (quaterion(QUAT_X) * quaterion(QUAT_X) +
                                       quaterion(QUAT_Y) * quaterion(QUAT_Y));
-    Float64 roll = atan2(sinr_cosp, cosr_cosp);
+    double roll = atan2(sinr_cosp, cosr_cosp);
 
     // pitch (y-axis rotation)
-    Float64 sinp = +2.0 * (quaterion(QUAT_W) * quaterion(QUAT_Y) -
+    double sinp = +2.0 * (quaterion(QUAT_W) * quaterion(QUAT_Y) -
                            quaterion(QUAT_Z) * quaterion(QUAT_X));
-    Float64 pitch;
+    double pitch;
     if (fabs(sinp) >= 1)
         pitch = copysign(M_PI / 2, sinp);  // use 90 degrees if out of range
     else
         pitch = asin(sinp);
 
     // yaw (z-axis rotation)
-    Float64 siny_cosp = +2.0 * (quaterion(QUAT_W) * quaterion(QUAT_Z) +
+    double siny_cosp = +2.0 * (quaterion(QUAT_W) * quaterion(QUAT_Z) +
                                 quaterion(QUAT_X) * quaterion(QUAT_Y));
-    Float64 cosy_cosp = +1.0 - 2.0 * (quaterion(QUAT_Y) * quaterion(QUAT_Y) +
+    double cosy_cosp = +1.0 - 2.0 * (quaterion(QUAT_Y) * quaterion(QUAT_Y) +
                                       quaterion(QUAT_Z) * quaterion(QUAT_Z));
-    Float64 yaw = atan2(siny_cosp, cosy_cosp);
+    double yaw = atan2(siny_cosp, cosy_cosp);
     Euler(EULER_ROLL) = roll;
     Euler(EULER_PITCH) = pitch;
     Euler(EULER_YAW) = yaw;
     return Euler;
 }
 
-Quaterion GetQuaterionFromRulerAngle(Float64 roll, Float64 pitch, Float64 yaw)
+Quaterion GetQuaterionFromRulerAngle(double roll, double pitch, double yaw)
 {
     Quaterion Quaterion;
     // Abbreviations for the various angular functions
-    Float64 cy = cos(yaw * 0.5);
-    Float64 sy = sin(yaw * 0.5);
-    Float64 cp = cos(pitch * 0.5);
-    Float64 sp = sin(pitch * 0.5);
-    Float64 cr = cos(roll * 0.5);
-    Float64 sr = sin(roll * 0.5);
+    double cy = cos(yaw * 0.5);
+    double sy = sin(yaw * 0.5);
+    double cp = cos(pitch * 0.5);
+    double sp = sin(pitch * 0.5);
+    double cr = cos(roll * 0.5);
+    double sr = sin(roll * 0.5);
 
     Quaterion(QUAT_W) = cy * cp * cr + sy * sp * sr;
     Quaterion(QUAT_X) = cy * cp * sr - sy * sp * cr;
@@ -184,10 +230,10 @@ Quaterion GetQuaterionFromRulerAngle(Float64 roll, Float64 pitch, Float64 yaw)
     return Quaterion;
 }
 
-Matrix<Float64, AUX_MATRIX_ROWS, AUX_MATRIX_COLS> GetLmatrixFromQuaterion(
+Matrix<double, AUX_MATRIX_ROWS, AUX_MATRIX_COLS> GetLmatrixFromQuaterion(
     const Quaterion &quaterion)
 {
-    Matrix<Float64, AUX_MATRIX_ROWS, AUX_MATRIX_COLS> Lmatrix;
+    Matrix<double, AUX_MATRIX_ROWS, AUX_MATRIX_COLS> Lmatrix;
     // update the auxiliary matrix
     /*
     L = [-q1 q0 q3 -q2;
@@ -216,10 +262,10 @@ Matrix<Float64, AUX_MATRIX_ROWS, AUX_MATRIX_COLS> GetLmatrixFromQuaterion(
     return Lmatrix;
 }
 
-Matrix<Float64, AUX_MATRIX_ROWS, AUX_MATRIX_COLS> GetRmatrixFromQuaterion(
+Matrix<double, AUX_MATRIX_ROWS, AUX_MATRIX_COLS> GetRmatrixFromQuaterion(
     const Quaterion &quaterion)
 {
-    Matrix<Float64, AUX_MATRIX_ROWS, AUX_MATRIX_COLS> Rmatrix;
+    Matrix<double, AUX_MATRIX_ROWS, AUX_MATRIX_COLS> Rmatrix;
     Rmatrix(0, 0) = -quaterion(QUAT_X);
     Rmatrix(1, 0) = -quaterion(QUAT_Y);
     Rmatrix(2, 0) = -quaterion(QUAT_Z);
