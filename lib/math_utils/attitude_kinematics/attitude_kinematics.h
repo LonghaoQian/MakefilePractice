@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define LIE_ALGEBRA_H
 
 #include "math_utils.h"
+
+
 namespace MathAuxiliary
 {
 /* ---- lie algebra ---- */
@@ -40,10 +42,11 @@ RotationMatrix RotationMatrixFromRoll(double phi);
 void RotationMatrixFromRoll(double phi, RotationMatrix &R21);
 RotationMatrix RotationMatrixFromPitch(double theta);
 RotationMatrix RotationMatrixFromYaw(double psi);
+constexpr uint32_t VECTOR_EXPRESSION_ROWS = 9;
 // distribute the columns of a rotation matrix into a 9 by 1 vector
-Matrix<double, 9, 1> ConvertRotationMatrixToVector(const RotationMatrix &R);
+Matrix<double, VECTOR_EXPRESSION_ROWS, 1> ConvertRotationMatrixToVector(const RotationMatrix &R);
 // form a rotation matrix with a 9 by 1 vector by columns
-RotationMatrix ConvertVectorToRotationMatrix(const Matrix<double, 9, 1> &v);
+RotationMatrix ConvertVectorToRotationMatrix(const Matrix<double, VECTOR_EXPRESSION_ROWS, 1> &v);
 
 /* ---- quaterion ---- */
 constexpr uint32_t AUX_MATRIX_ROWS = 3;
