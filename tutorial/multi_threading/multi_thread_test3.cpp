@@ -27,17 +27,38 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <chrono>
 #include <thread>
 #include <functional>
+#include <type_traits>
 
 int TestFunc(int a, int b, int& c)
 {
     return a + b - c;
 }
 
+
+int TestFunc2(float a, double b, char c)
+{
+    return a + b - c;
+}
+
+template <typename T, typename ...Args>
+void ProcFunc(std::function<T(Args ...)>&& ptr, Args &&... args)
+{
+    using Task = std::function<T(Args ...)>;
+    std::packaged_task<T(Args ...)> t1(std::forward<Task>(ptr));
+    auto fut = t1.get_future();
+    std::thread th1 = std::thread(std::move(t1), std::forward<Args>(args)...);
+    auto res = fut.get();
+    th1.join();
+    std::cout<<res<<'\n';
+}
+
+
 int main(void)
 {
     // define a packed task
+    std::function<int(int, int, int&)> f1(TestFunc);
     using Task = std::packaged_task<int(int, int, int&)>;
-    Task t1(TestFunc);
+    Task t1(f1);
     auto fut = t1.get_future();
     int a = 1;
     int b = 2;
@@ -46,5 +67,7 @@ int main(void)
     auto res = fut.get();
     std::cout<<res<<'\n';
     th1.join();
+    std::function<int(float, double, char)> f2(TestFunc2);
+    ProcFunc(std::move(f2), 0.1f, static_cast<double>(b), static_cast<char>(c));
     return 0;
 }
