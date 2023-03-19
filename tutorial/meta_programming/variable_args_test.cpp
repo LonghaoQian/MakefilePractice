@@ -21,7 +21,51 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 // test for template function with variable args and std bind
 
+#include <iostream>
+#include <string.h>
+template <typename T>
+class SigmaTraits {};
+template <> class SigmaTraits<char>{
+public:
+    typedef int ReturnType;
+};
+
+template <> class SigmaTraits<short> {
+public:
+    typedef int ReturnType;
+};
+
+template <> class SigmaTraits<int> {
+public:
+    typedef long ReturnType;
+};
+
+template <> class SigmaTraits<unsigned int> {
+public:
+    typedef unsigned long ReturnType;
+};
+
+template <> class SigmaTraits<float> {
+public:
+    typedef double ReturnType;
+};
+
+template <typename T>
+inline typename SigmaTraits<T>::ReturnType Sigma(const T *start, const T *end)
+{
+    typedef typename SigmaTraits<T>::ReturnType ReturnType;
+    ReturnType s = ReturnType();
+    while (start != end) {
+        s += *start++;
+    }
+    return s;
+}
 int main(void)
 {
+    char szNames[] = "abd";
+    std::size_t nLength = strlen(szNames);
+    char* p = szNames;
+    char* q = szNames + nLength;
+    std::cout<<Sigma(p, q)<<'\n';
     return 0;
 }

@@ -84,7 +84,7 @@ class A
     }
 
     // move constructor
-    // inf noexcept is not added, then it is not called when vector resizes
+    // if noexcept is not added, then it is not called when vector resizes
     A(A &&obj) noexcept
     {
         std::cout << "move constructor called\n";

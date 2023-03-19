@@ -78,7 +78,20 @@
         "tensor": "cpp",
         "*.traits": "cpp",
         "alignedvector3": "cpp",
-        "fft": "cpp"
+        "fft": "cpp",
+        "superlusupport": "cpp",
+        "*.evaluator": "cpp",
+        "adolcforward": "cpp",
+        "autodiff": "cpp",
+        "bvh": "cpp",
+        "eulerangles": "cpp",
+        "kroneckerproduct": "cpp",
+        "mprealsupport": "cpp",
+        "nnls": "cpp",
+        "numericaldiff": "cpp",
+        "openglsupport": "cpp",
+        "specialfunctions": "cpp",
+        "splines": "cpp"
     },
     "C_Cpp.default.configurationProvider": "go2sh.cmake-integration"
 }
