@@ -97,7 +97,6 @@ private:
     std::vector<T> data;
 };
 
-// partial specialization
 int main(void)
 {
     int res1 = Func1(1, 2.0); // ok

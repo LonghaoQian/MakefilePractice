@@ -19,13 +19,32 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 *************************************************************/
 
+// test packed task
+
 #include <iostream>
-#include <thread>
+#include <future>
 #include <string>
 #include <chrono>
+#include <thread>
+#include <functional>
+
+int TestFunc(int a, int b, int& c)
+{
+    return a + b - c;
+}
 
 int main(void)
 {
-    
+    // define a packed task
+    using Task = std::packaged_task<int(int, int, int&)>;
+    Task t1(TestFunc);
+    auto fut = t1.get_future();
+    int a = 1;
+    int b = 2;
+    int c = 5;
+    std::thread th1 = std::thread(std::move(t1), a, b, std::ref(c));
+    auto res = fut.get();
+    std::cout<<res<<'\n';
+    th1.join();
     return 0;
 }
