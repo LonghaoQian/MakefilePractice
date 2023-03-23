@@ -19,7 +19,29 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 *************************************************************/
 
+#include <iostream>
+#include <functional>
+
+class A {
+public:
+    A(void) { }
+    int Func1(int a) { return a; }
+    int Func2(int b) { return b; }
+};
+
+
+int (A::*Amptr)(int) = &A::Func1;
+using Amptr1 = int(A::*)(int);
+using Ptr = std::function<int(A&, int)>;
 int main(void)
 {
+    A a1;
+    A *p1 = new A();
+    (a1.*Amptr)(1);
+    (p1->*Amptr)(1);
+    Amptr1 ptr = &A::Func2;
+    (p1->*ptr)(1);
+    Ptr f1 = &A::Func1;
+    f1(a1, 2);
     return 0;
 }
