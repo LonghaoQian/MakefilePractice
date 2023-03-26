@@ -19,18 +19,33 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 *************************************************************/
 
-// scoped_lock 
-
-// unique_lock, shared_lock
+// 2-phase name lookup and compile-time polymorphism
 
 #include <iostream>
-#include <thread>
-#include <mutex>
-#include <string>
+
+template<typename T>
+struct Base {
+    void f(void) { std::cout<<"Base<T>::f"<<'\n'; }
+};
+
+template<>
+struct Base<int> {
+    void f(void) { std::cout<<"Base<Int>::f"<<'\n'; }
+};
+
+template<typename T>
+struct Derived : Base<T> {
+    void g(void) {
+        std::cout<<"Derived<T>::g "<<'\n';
+        this->f(); // must have 'this->' for 2-phase name lookup
+    }
+};
 
 int main(void)
 {
-    int counter = 0;
-
-    return counter;
+    Derived<char> d;
+    d.g();
+    Derived<int> f;
+    f.g();
+    return 0;
 }

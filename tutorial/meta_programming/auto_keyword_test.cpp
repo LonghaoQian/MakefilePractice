@@ -19,18 +19,35 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 *************************************************************/
 
-// scoped_lock 
-
-// unique_lock, shared_lock
+// auto keyword and template programming
 
 #include <iostream>
-#include <thread>
-#include <mutex>
-#include <string>
+#include <vector>
+#include <iterator>
+#include <algorithm>
+
+template<typename T>
+void Func(const T& c)
+{
+    // ADL
+    // 依赖参数查找
+    using std::begin;
+    using std::end;
+    for (auto it = begin(c), ite = end(c); it != ite; ++it) {
+        std::cout<<*it<<'\n';
+    }
+}
 
 int main(void)
 {
-    int counter = 0;
-
-    return counter;
+    int a[10];
+    for (size_t i = 0; i < 10; i++) {
+        a[i] = i;
+    }
+    std::vector<int> b(10, 3);
+    Func(a);
+    Func(b);
+    std::copy(b.begin(), b.end(), std::ostream_iterator<int>(std::cout, " "));
+    std::cout<<std::endl;
+    return 0;
 }

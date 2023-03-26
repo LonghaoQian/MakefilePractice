@@ -19,18 +19,27 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 *************************************************************/
 
-// scoped_lock 
-
-// unique_lock, shared_lock
-
 #include <iostream>
-#include <thread>
-#include <mutex>
-#include <string>
+#include <vector>
+#include <chrono>
 
 int main(void)
 {
-    int counter = 0;
+    {
+        auto t1 = std::chrono::steady_clock::now();
+        std::cout<<"Hellow world\n";
+        auto t2 = std::chrono::steady_clock::now();
+        std::cout<< std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count()
+        <<" ns has passed.\n";
+    }
 
-    return counter;
+    {
+        auto t1 = std::chrono::steady_clock::now();
+        std::cout<<"Hellow world\n";
+        auto t2 = std::chrono::steady_clock::now();
+        std::cout<< std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count()
+        <<" ns has passed.\n";
+    }
+
+    return 0;
 }
