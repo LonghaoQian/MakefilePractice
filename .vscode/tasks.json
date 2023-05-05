@@ -2,17 +2,7 @@
     "version": "2.0.0",
     "tasks": [
       {
-        "label": "01 build",
-        "type": "shell",
-        "command": "./build.sh",
-        "group": {
-          "kind": "build",
-          "isDefault": true
-        },
-        "problemMatcher": []
-      },
-      {
-        "label": "02 config",
+        "label": "01 config",
         "type": "shell",
         "command": "./config.sh",
         "group": {
@@ -22,7 +12,31 @@
         "problemMatcher": []
       },
       {
-        "label": "03 cppcheck",
+        "label": "02 build",
+        "type": "shell",
+        "command": "./build.sh",
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "problemMatcher": []
+      },
+      {
+        "label": "03 config and build",
+        "type": "shell",
+        "dependsOrder": "sequence",
+        "dependsOn" :[
+          "01 config",
+          "02 build",
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "problemMatcher": []
+      },
+      {
+        "label": "04 cppcheck",
         "type": "shell",
         "command": "./code_check.sh",
         "group": {
@@ -32,7 +46,7 @@
         "problemMatcher": []
       },
       {
-        "label": "04 run_ut",
+        "label": "05 run_ut",
         "type": "shell",
         "command": "./run_ut.sh",
         "group": {
@@ -42,7 +56,7 @@
         "problemMatcher": []
       },
       {
-        "label": "05 install",
+        "label": "06 install",
         "type": "shell",
         "command": "./install.sh",
         "group": {

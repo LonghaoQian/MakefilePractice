@@ -19,8 +19,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 *************************************************************/
 
-#include <iterator>
+// customized iterator
 
+#include <iterator>
+#include <iostream>
+#include <algorithm>
+
+constexpr size_t DEFAULT_SIZE = 10;
+template <size_t n = DEFAULT_SIZE>
 class Integers
 {
 public: 
@@ -44,10 +50,20 @@ public:
     private:
         pointer m_ptr{nullptr};
     };
-    
+    Iterator begin(void) { return Iterator(&m_data[0]); }
+    Iterator end(void) { return Iterator(&m_data[n]); }
+private:
+    int m_data[n]{0};
 };
 
 int main(void)
 {
+    Integers<20> integers;
+    // use algorithm to modify custom container
+    std::fill(integers.begin(), integers.end(), 3);
+    // range-based for loop
+    for (auto i : integers) {
+        std::cout<< i << '\n';
+    }
     return 0;
 }
