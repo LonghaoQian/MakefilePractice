@@ -1,1 +1,0 @@
-cmake --install build/lib/graph_analysis_toolbox/

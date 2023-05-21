@@ -4,5 +4,4 @@ add_library(${RUNGE_KUTTA} STATIC ${runge_kutta_src_list})
 target_include_directories(${RUNGE_KUTTA} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${RUNGE_KUTTA} PUBLIC Eigen3::Eigen)
 target_include_directories(${RUNGE_KUTTA} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
-target_compile_options(${RUNGE_KUTTA} PRIVATE $<$<CXX_COMPILER_ID:MSVC>:${MSVC_FLAGS}>
-                       $<$<CXX_COMPILER_ID:GNU>:${GNU_FLAGS}>)
+target_compile_options(${RUNGE_KUTTA} PRIVATE ${COMPILE_FLAGS})
