@@ -31,8 +31,6 @@ else()
     message(FATAL_ERROR "Invalid build type: " ${CMAKE_BUILD_TYPE})
 endif()
 
-
-
 #---------------- add third party lib ------------------
 add_subdirectory(thirdparty)
 #------------------- add lib ---------------------------

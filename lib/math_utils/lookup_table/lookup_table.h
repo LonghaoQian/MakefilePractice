@@ -1,21 +1,26 @@
 /*************************************************************
 
-Copyright(C) 2022 Longhao Qian
+MIT License
 
-This program is free software; you can redistribute it and / or
-modify it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License,
-or (at your option) any later version.
+Copyright (c) 2023 Dr. Longhao Qian
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-You should have received a copy of the GNU General Public License
-along with this program;
-if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 *************************************************************/
 #ifndef LOOKUP_TABLE_H
@@ -30,23 +35,23 @@ struct Lookup1DData {
     MatrixXd data;  // input table
     VectorXd ref;   // reference for interpolation. the len of ref must equal to
                     // the rows of data
-    Float32 target{0.0};
+    double target{0.0};
     bool extrapolation{false};  // whether extrapolation is used when the target
                                 // is outside of ref
     bool ascending{false};      // whether the ref is in ascending order
 };
-std::pair<Uint32, Uint32> BinarySearchVector(bool ascending, const VectorXd &p,
-                                             Float64 target);
+std::pair<uint32_t, uint32_t> BinarySearchVector(bool ascending, const VectorXd &p,
+                                             double target);
 
 VectorXd LinearInterpolation1D(const VectorXd &dataStart,
-                               const VectorXd &dataEnd, Float64 refStart,
-                               Float64 refEnd, Float64 target);
+                               const VectorXd &dataEnd, double refStart,
+                               double refEnd, double target);
 
-Float64 LinearInterpolation2D(const MatrixXd &data, const Vector2i &index_1d,
+double LinearInterpolation2D(const MatrixXd &data, const Vector2i &index_1d,
                               const Vector2i &index_2d,
                               const VectorXd &reference_1d,
-                              const VectorXd &reference_2d, Float64 target1,
-                              Float64 target2);
+                              const VectorXd &reference_2d, double target1,
+                              double target2);
 VectorXd Lookup1D(const Lookup1DData &input);
 }  // namespace MathAuxiliary
 
