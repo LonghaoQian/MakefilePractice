@@ -1,4 +1,3 @@
-
 target_include_directories(${UT_TARGET}
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}

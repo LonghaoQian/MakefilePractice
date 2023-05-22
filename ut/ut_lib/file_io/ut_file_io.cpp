@@ -24,28 +24,42 @@ SOFTWARE.
 
 *************************************************************/
 
-#include <iostream>
-#include <stdint.h>
 #include "gtest/gtest.h"
-#include "attitude_kinematics.cpp"
+#include "csv_read.cpp"
+#include <algorithm>
 
-class ut_attitude_kinematics : public testing::Test
+class ut_file_io : public testing::Test
 {
    protected:
     virtual void SetUp()
     {
-        std::cout << "setup attitude kinematics testing.... \n";
+        std::cout << "setup file_io testing.... \n";
     }
     virtual void TearDown()
     {
-        std::cout << "teardown attitude kinematics testing... \n";
+        std::cout << "teardown file_io testing... \n";
     }
 };
 
-TEST_F(ut_attitude_kinematics, test_Veemap)
+TEST_F(ut_file_io, csv_read_test_normal)
 {
-    Eigen::Matrix3d input;
-    input << 0.0, -0.3, 0.1, 0.1, 0.0, 3.1, -4.0, -3.8, 0.0;
-    auto res = MathAuxiliary::Veemap(input);
-    EXPECT_EQ(res(MathAuxiliary::VECTOR_X), -input(1, 2));
+    File_IO::CsvContent reference {
+        { "title 1", "1", "c", "po" },
+        { "title 2", "2", "2", "pcd" },
+        { "title 3", "3", "d", "1dsfdo" }};
+    auto res = File_IO::GetCsvContent("./ut/data/csv_test/data1.csv");
+    ASSERT_NE(res.size(), 0u);
+    EXPECT_TRUE(reference == res);
+}
+
+TEST_F(ut_file_io, csv_read_test_no_file)
+{
+    auto res = File_IO::GetCsvContent("data.csv");
+    EXPECT_EQ(res.size(), 0u);
+}
+
+TEST_F(ut_file_io, csv_read_test_nullptr)
+{
+    auto res = File_IO::GetCsvContent(nullptr);
+    EXPECT_EQ(res.size(), 0u);
 }

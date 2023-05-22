@@ -42,4 +42,7 @@ add_subdirectory(src)
 # ---------------build tutorial ---------------------------
 add_subdirectory(tutorial)
 #----------------build test target ------------------------
-add_subdirectory(ut)
+if (${BUILD_TYPE_} STREQUAL "debug")
+    # ut is only built in debug mode
+    add_subdirectory(ut)
+endif()

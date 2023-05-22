@@ -24,28 +24,36 @@ SOFTWARE.
 
 *************************************************************/
 
+#include "csv_read.h"
 #include <iostream>
-#include <stdint.h>
-#include "gtest/gtest.h"
-#include "attitude_kinematics.cpp"
+#include <fstream>
+#include <sstream>
 
-class ut_attitude_kinematics : public testing::Test
+namespace File_IO
 {
-   protected:
-    virtual void SetUp()
+
+    CsvContent GetCsvContent(const char* fileName)
     {
-        std::cout << "setup attitude kinematics testing.... \n";
-    }
-    virtual void TearDown()
-    {
-        std::cout << "teardown attitude kinematics testing... \n";
+        std::vector<std::vector<std::string>> res;
+        if (fileName == nullptr) {
+            std::cout<<"ERR: invalid file name "<<'\n';
+            return res;
+        }
+        std::vector<std::string> row;
+        std::fstream file(fileName, std::ios::in);
+        std::string line, word;
+        if(file.is_open()) {
+            while(getline(file, line)) {
+                row.clear();
+                std::stringstream str(line);
+                while(getline(str, word, ',')) {
+                    row.emplace_back(word);                    
+                }
+                res.emplace_back(row);
+            }
+        } else {
+            std::cout<<"ERR: Can not open file: "<<fileName<<'\n';
+        }
+        return res;
     }
 };
-
-TEST_F(ut_attitude_kinematics, test_Veemap)
-{
-    Eigen::Matrix3d input;
-    input << 0.0, -0.3, 0.1, 0.1, 0.0, 3.1, -4.0, -3.8, 0.0;
-    auto res = MathAuxiliary::Veemap(input);
-    EXPECT_EQ(res(MathAuxiliary::VECTOR_X), -input(1, 2));
-}

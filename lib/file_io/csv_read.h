@@ -23,29 +23,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 *************************************************************/
+#ifndef CSV_READ_H
+#define CSV_READ_H
 
-#include <iostream>
-#include <stdint.h>
-#include "gtest/gtest.h"
-#include "attitude_kinematics.cpp"
+#include <string>
+#include <vector>
 
-class ut_attitude_kinematics : public testing::Test
+namespace File_IO
 {
-   protected:
-    virtual void SetUp()
-    {
-        std::cout << "setup attitude kinematics testing.... \n";
-    }
-    virtual void TearDown()
-    {
-        std::cout << "teardown attitude kinematics testing... \n";
-    }
+    using CsvContent = std::vector<std::vector<std::string>>;
+    CsvContent GetCsvContent(const char* fileName);
 };
 
-TEST_F(ut_attitude_kinematics, test_Veemap)
-{
-    Eigen::Matrix3d input;
-    input << 0.0, -0.3, 0.1, 0.1, 0.0, 3.1, -4.0, -3.8, 0.0;
-    auto res = MathAuxiliary::Veemap(input);
-    EXPECT_EQ(res(MathAuxiliary::VECTOR_X), -input(1, 2));
-}
+#endif

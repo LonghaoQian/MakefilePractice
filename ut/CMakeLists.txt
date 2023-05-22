@@ -8,6 +8,7 @@ set(GTEST_LIB_DIR "../google_test/debug/lib")
 set(ut_math_utils_src_list
     ${CMAKE_CURRENT_SOURCE_DIR}/../lib/math_utils/attitude_kinematics
     ${CMAKE_CURRENT_SOURCE_DIR}/../lib/math_utils/utils
+    ${CMAKE_CURRENT_SOURCE_DIR}/../lib/file_io
 )
 
 set(ut_src_list
