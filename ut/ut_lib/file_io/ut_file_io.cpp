@@ -31,22 +31,15 @@ SOFTWARE.
 class ut_file_io : public testing::Test
 {
    protected:
-    virtual void SetUp()
-    {
-        std::cout << "setup file_io testing.... \n";
-    }
-    virtual void TearDown()
-    {
-        std::cout << "teardown file_io testing... \n";
-    }
+    virtual void SetUp() { std::cout << "setup file_io testing.... \n"; }
+    virtual void TearDown() { std::cout << "teardown file_io testing... \n"; }
 };
 
 TEST_F(ut_file_io, csv_read_test_normal)
 {
-    File_IO::CsvContent reference {
-        { "title 1", "1", "c", "po" },
-        { "title 2", "2", "2", "pcd" },
-        { "title 3", "3", "d", "1dsfdo" }};
+    File_IO::CsvContent reference{{"title 1", "1", "c", "po"},
+                                  {"title 2", "2", "2", "pcd"},
+                                  {"title 3", "3", "d", "1dsfdo"}};
     auto res = File_IO::GetCsvContent("./ut/data/csv_test/data1.csv");
     ASSERT_NE(res.size(), 0u);
     EXPECT_TRUE(reference == res);
