@@ -25,34 +25,30 @@ SOFTWARE.
 *************************************************************/
 
 #include "csv_read.h"
-#include <iostream>
-#include <fstream>
-#include <sstream>
 
 namespace File_IO
 {
-
-    CsvContent GetCsvContent(const char* fileName)
+    CsvContent GetFromCsv(const char* fileName)
     {
-        std::vector<std::vector<std::string>> res;
         if (fileName == nullptr) {
             std::cout<<"ERR: invalid file name "<<'\n';
-            return res;
+            return {};
         }
         std::vector<std::string> row;
         std::fstream file(fileName, std::ios::in);
         std::string line, word;
-        if(file.is_open()) {
-            while(getline(file, line)) {
-                row.clear();
-                std::stringstream str(line);
-                while(getline(str, word, ',')) {
-                    row.emplace_back(word);                    
-                }
-                res.emplace_back(row);
-            }
-        } else {
+        if(!file.is_open()) {
             std::cout<<"ERR: Can not open file: "<<fileName<<'\n';
+            return {};
+        }
+        std::vector<std::vector<std::string>> res;
+        while(getline(file, line)) {
+            row.clear();
+            std::stringstream str(line);
+            while(getline(str, word, ',')) {
+                row.emplace_back(word);
+            }
+            res.emplace_back(row);
         }
         return res;
     }

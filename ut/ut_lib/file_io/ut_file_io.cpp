@@ -40,19 +40,97 @@ TEST_F(ut_file_io, csv_read_test_normal)
     File_IO::CsvContent reference{{"title 1", "1", "c", "po"},
                                   {"title 2", "2", "2", "pcd"},
                                   {"title 3", "3", "d", "1dsfdo"}};
-    auto res = File_IO::GetCsvContent("./ut/data/csv_test/data1.csv");
+    auto res = File_IO::GetFromCsv("./ut/data/csv_test/data1.csv");
     ASSERT_NE(res.size(), 0u);
     EXPECT_TRUE(reference == res);
 }
 
 TEST_F(ut_file_io, csv_read_test_no_file)
 {
-    auto res = File_IO::GetCsvContent("data.csv");
+    auto res = File_IO::GetFromCsv("data.csv");
     EXPECT_EQ(res.size(), 0u);
 }
 
 TEST_F(ut_file_io, csv_read_test_nullptr)
 {
-    auto res = File_IO::GetCsvContent(nullptr);
+    auto res = File_IO::GetFromCsv(nullptr);
     EXPECT_EQ(res.size(), 0u);
+}
+
+TEST_F(ut_file_io, csv_write_test_nullptr)
+{
+    File_IO::CsvContent reference{{"title 1", "1", "c", "po"},
+                                  {"title 2", "2", "2", "pcd"},
+                                  {"title 3", "3", "d", "1dsfdo"}};
+    auto flag = File_IO::WriteToCsv(nullptr,
+                                    reference,
+                                    std::ios::trunc);
+    EXPECT_FALSE(flag);
+}
+
+// test write to csv in overwrite mode
+TEST_F(ut_file_io, csv_write_test_normal_trunc)
+{
+    File_IO::CsvContent reference{{"title 1", "1", "c", "po"},
+                                  {"title 2", "2", "2", "pcd"},
+                                  {"title 3", "3", "d", "1dsfdo"}};
+    auto flag = File_IO::WriteToCsv("./ut/data/csv_test/data2.csv",
+                                    reference,
+                                    std::ios::trunc);
+    EXPECT_TRUE(flag);
+    auto res = File_IO::GetFromCsv("./ut/data/csv_test/data2.csv");
+    ASSERT_NE(res.size(), 0u);
+    // compare the contents
+    EXPECT_TRUE(reference == res);
+    if (reference == res) {
+        return;
+    }
+    std::cout<<"reference:\n";
+    // if not equal, show the differenece
+    for (auto it = reference.begin(); it != reference.end(); it++) {
+        copy((*it).begin(), (*it).end(), std::ostream_iterator<std::string>(std::cout, ","));
+        std::cout<<std::endl;
+    }
+    std::cout<<"res:\n";
+    for (auto it = res.begin(); it != res.end(); it++) {
+        copy((*it).begin(), (*it).end(), std::ostream_iterator<std::string>(std::cout, ","));
+        std::cout<<std::endl;
+    }
+}
+
+// test write to csv in append mode
+TEST_F(ut_file_io, csv_write_test_normal_app)
+{
+    File_IO::CsvContent reference{{"title 1", "1", "c", "po"},
+                                  {"title 2", "2", "2", "pcd"},
+                                  {"title 3", "3", "d", "1dsfdo"}};
+    auto flag = File_IO::WriteToCsv("./ut/data/csv_test/data2.csv",
+                                    reference,
+                                    std::ios::trunc);
+    EXPECT_TRUE(flag);
+    flag = File_IO::WriteToCsv("./ut/data/csv_test/data2.csv",
+                                    reference,
+                                    std::ios::app);
+    EXPECT_TRUE(flag);
+    File_IO::CsvContent reference2;
+    reference2.reserve(2 * reference.size());
+    reference2.insert(reference2.end(), reference.begin(), reference.end());
+    reference2.insert(reference2.end(), reference.begin(), reference.end());
+    auto res = File_IO::GetFromCsv("./ut/data/csv_test/data2.csv");
+    ASSERT_NE(res.size(), 0u);
+    // compare the contents
+    EXPECT_TRUE(reference2 == res);
+    if (reference2 == res) {
+        return;
+    }
+    // if not equal, show the differenece
+    for (auto it = reference2.begin(); it != reference2.end(); it++) {
+        copy((*it).begin(), (*it).end(), std::ostream_iterator<std::string>(std::cout, ","));
+        std::cout<<std::endl;
+    }
+    std::cout<<"res:\n";
+    for (auto it = res.begin(); it != res.end(); it++) {
+        copy((*it).begin(), (*it).end(), std::ostream_iterator<std::string>(std::cout, ","));
+        std::cout<<std::endl;
+    }
 }

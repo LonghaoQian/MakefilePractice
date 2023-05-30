@@ -28,11 +28,32 @@ SOFTWARE.
 
 #include <string>
 #include <vector>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <iterator>
 
 namespace File_IO
 {
     using CsvContent = std::vector<std::vector<std::string>>;
-    CsvContent GetCsvContent(const char* fileName);
+    using OpenMode =  std::ios::ios_base::openmode; // app for append, trunc for overwrite
+    CsvContent GetFromCsv(const char* fileName);
+    // template<typename T>
+    bool WriteToCsv(const char* fileName, const CsvContent& content, OpenMode mode) {
+        if (fileName == nullptr) {
+            std::cout<<"ERR: invalid file name "<<'\n';
+            return false;
+        }
+        // if file does not exists, create a new file
+        std::fstream file(fileName, mode | std::fstream::out);
+        std::stringstream temp;
+        for (auto it = content.begin(); it != content.end(); it++) {
+            temp.str("");
+            copy((*it).begin(), (*it).end(), std::ostream_iterator<std::string>(temp, ","));
+            file<<temp.str()<<'\n';
+        }
+        return true;
+    }
 };
 
 #endif
