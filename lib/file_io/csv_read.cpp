@@ -28,7 +28,7 @@ SOFTWARE.
 
 namespace File_IO
 {
-    CsvContent GetFromCsv(const char* fileName)
+    CsvContent<std::string> GetFromCsv(const char* fileName)
     {
         if (fileName == nullptr) {
             std::cout<<"ERR: invalid file name "<<'\n';

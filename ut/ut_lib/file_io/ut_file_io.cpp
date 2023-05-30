@@ -37,7 +37,7 @@ class ut_file_io : public testing::Test
 
 TEST_F(ut_file_io, csv_read_test_normal)
 {
-    File_IO::CsvContent reference{{"title 1", "1", "c", "po"},
+    File_IO::CsvContent<std::string> reference{{"title 1", "1", "c", "po"},
                                   {"title 2", "2", "2", "pcd"},
                                   {"title 3", "3", "d", "1dsfdo"}};
     auto res = File_IO::GetFromCsv("./ut/data/csv_test/data1.csv");
@@ -59,7 +59,7 @@ TEST_F(ut_file_io, csv_read_test_nullptr)
 
 TEST_F(ut_file_io, csv_write_test_nullptr)
 {
-    File_IO::CsvContent reference{{"title 1", "1", "c", "po"},
+    File_IO::CsvContent<std::string> reference{{"title 1", "1", "c", "po"},
                                   {"title 2", "2", "2", "pcd"},
                                   {"title 3", "3", "d", "1dsfdo"}};
     auto flag = File_IO::WriteToCsv(nullptr,
@@ -71,7 +71,7 @@ TEST_F(ut_file_io, csv_write_test_nullptr)
 // test write to csv in overwrite mode
 TEST_F(ut_file_io, csv_write_test_normal_trunc)
 {
-    File_IO::CsvContent reference{{"title 1", "1", "c", "po"},
+    File_IO::CsvContent<std::string> reference{{"title 1", "1", "c", "po"},
                                   {"title 2", "2", "2", "pcd"},
                                   {"title 3", "3", "d", "1dsfdo"}};
     auto flag = File_IO::WriteToCsv("./ut/data/csv_test/data2.csv",
@@ -101,7 +101,7 @@ TEST_F(ut_file_io, csv_write_test_normal_trunc)
 // test write to csv in append mode
 TEST_F(ut_file_io, csv_write_test_normal_app)
 {
-    File_IO::CsvContent reference{{"title 1", "1", "c", "po"},
+    File_IO::CsvContent<std::string> reference{{"title 1", "1", "c", "po"},
                                   {"title 2", "2", "2", "pcd"},
                                   {"title 3", "3", "d", "1dsfdo"}};
     auto flag = File_IO::WriteToCsv("./ut/data/csv_test/data2.csv",
@@ -112,7 +112,7 @@ TEST_F(ut_file_io, csv_write_test_normal_app)
                                     reference,
                                     std::ios::app);
     EXPECT_TRUE(flag);
-    File_IO::CsvContent reference2;
+    File_IO::CsvContent<std::string> reference2;
     reference2.reserve(2 * reference.size());
     reference2.insert(reference2.end(), reference.begin(), reference.end());
     reference2.insert(reference2.end(), reference.begin(), reference.end());
@@ -131,6 +131,43 @@ TEST_F(ut_file_io, csv_write_test_normal_app)
     std::cout<<"res:\n";
     for (auto it = res.begin(); it != res.end(); it++) {
         copy((*it).begin(), (*it).end(), std::ostream_iterator<std::string>(std::cout, ","));
+        std::cout<<std::endl;
+    }
+}
+
+// test write to csv for input double
+TEST_F(ut_file_io, csv_write_test_normal_double)
+{
+    File_IO::CsvContent<double> reference{{ 1e9, 0.2, 0.03, -4.0 },
+                                { 50.0, 0.1236, 0.0, -91.9}};
+    auto flag = File_IO::WriteToCsv("./ut/data/csv_test/data3.csv",
+                                    reference,
+                                    std::ios::trunc);
+    EXPECT_TRUE(flag);
+    auto res = File_IO::GetFromCsv("./ut/data/csv_test/data3.csv");
+    ASSERT_NE(res.size(), 0u);
+    File_IO::CsvContent<double> resDouble;
+    resDouble.reserve(res.size());
+    std::for_each(res.begin(), res.end(), [&resDouble](const std::vector<std::string>& a) {
+        resDouble.push_back({});
+        std::for_each(a.begin(), a.end(), [&resDouble](const std::string& b){
+            resDouble.back().push_back(std::stod(b));
+        });
+    });
+    // compare the contents
+    EXPECT_TRUE(reference == resDouble);
+    if (reference == resDouble) {
+        return;
+    }
+
+    // if not equal, show the differenece
+    for (auto it = reference.begin(); it != reference.end(); it++) {
+        copy((*it).begin(), (*it).end(), std::ostream_iterator<double>(std::cout, ","));
+        std::cout<<std::endl;
+    }
+    std::cout<<"res:\n";
+    for (auto it = resDouble.begin(); it != resDouble.end(); it++) {
+        copy((*it).begin(), (*it).end(), std::ostream_iterator<double>(std::cout, ","));
         std::cout<<std::endl;
     }
 }

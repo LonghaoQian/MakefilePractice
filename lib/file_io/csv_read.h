@@ -35,11 +35,13 @@ SOFTWARE.
 
 namespace File_IO
 {
-    using CsvContent = std::vector<std::vector<std::string>>;
+    template <typename T>
+    using CsvContent = std::vector<std::vector<T>>;
     using OpenMode =  std::ios::ios_base::openmode; // app for append, trunc for overwrite
-    CsvContent GetFromCsv(const char* fileName);
-    // template<typename T>
-    bool WriteToCsv(const char* fileName, const CsvContent& content, OpenMode mode) {
+    CsvContent<std::string> GetFromCsv(const char* fileName);
+
+    template <typename T>
+    bool WriteToCsv(const char* fileName, const CsvContent<T>& content, OpenMode mode) {
         if (fileName == nullptr) {
             std::cout<<"ERR: invalid file name "<<'\n';
             return false;
@@ -49,7 +51,7 @@ namespace File_IO
         std::stringstream temp;
         for (auto it = content.begin(); it != content.end(); it++) {
             temp.str("");
-            copy((*it).begin(), (*it).end(), std::ostream_iterator<std::string>(temp, ","));
+            copy((*it).begin(), (*it).end(), std::ostream_iterator<T>(temp, ","));
             file<<temp.str()<<'\n';
         }
         return true;
