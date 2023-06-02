@@ -146,14 +146,7 @@ TEST_F(ut_file_io, csv_write_test_normal_double)
     EXPECT_TRUE(flag);
     auto res = File_IO::GetFromCsv("./ut/data/csv_test/data3.csv");
     ASSERT_NE(res.size(), 0u);
-    File_IO::CsvContent<double> resDouble;
-    resDouble.reserve(res.size());
-    std::for_each(res.begin(), res.end(), [&resDouble](const std::vector<std::string>& a) {
-        resDouble.push_back({});
-        std::for_each(a.begin(), a.end(), [&resDouble](const std::string& b){
-            resDouble.back().push_back(std::stod(b));
-        });
-    });
+    auto resDouble = File_IO::ConvertCsv<double>(res);
     // compare the contents
     EXPECT_TRUE(reference == resDouble);
     if (reference == resDouble) {

@@ -32,7 +32,7 @@ SOFTWARE.
 #include <fstream>
 #include <sstream>
 #include <iterator>
-
+#include <algorithm>
 namespace File_IO
 {
     template <typename T>
@@ -55,6 +55,61 @@ namespace File_IO
             file<<temp.str()<<'\n';
         }
         return true;
+    }
+
+    // default is double
+    template<class T>
+    inline T ConvertString(const std::string& input) {
+        return std::stod(input);
+    }
+
+    template<>
+    inline double ConvertString<double>(const std::string& input) {
+        return std::stod(input);
+    }
+
+    template<>
+    inline float ConvertString<float>(const std::string& input) {
+        return std::stof(input);
+    }
+
+    template<>
+    inline long double ConvertString<long double>(const std::string& input) {
+        return std::stold(input);
+    }
+
+    template<>
+    inline int ConvertString<int>(const std::string& input) {
+        return std::stoi(input);
+    }
+
+    template<>
+    inline long int ConvertString<long int>(const std::string& input) {
+        return std::stoll(input);
+    }
+
+    template<>
+    inline unsigned int ConvertString<unsigned int>(const std::string& input) {
+        return std::stoul(input);
+    }
+
+    template<>
+    inline unsigned long int ConvertString<unsigned long int>(const std::string& input) {
+        return std::stoull(input);
+    }
+
+    template <typename T>
+    CsvContent<T> ConvertCsv(const CsvContent<std::string>& original)
+    {
+        CsvContent<T> res;
+        res.reserve(original.size());
+        std::for_each(original.begin(), original.end(), [&res](const std::vector<std::string>& a) {
+            res.push_back({});
+            std::for_each(a.begin(), a.end(), [&res](const std::string& b) {
+                res.back().push_back(ConvertString<T>(b));
+            });
+        });
+        return res;
     }
 };
 
