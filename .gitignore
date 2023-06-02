@@ -16,6 +16,9 @@ out/**
 build_release/**
 build_debug/**
 
+# ut results
+ut/results/*
+
 # Visual Studio 2015/2017 cache/options directory
 .vs/
 
