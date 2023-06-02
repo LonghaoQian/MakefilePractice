@@ -23,39 +23,33 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 *************************************************************/
-#ifndef CSV_READ_H
-#define CSV_READ_H
 
-#include <string>
-#include <vector>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <iterator>
+#include "csv_proc.h"
 
 namespace File_IO
 {
-    template <typename T>
-    using CsvContent = std::vector<std::vector<T>>;
-    using OpenMode =  std::ios::ios_base::openmode; // app for append, trunc for overwrite
-    CsvContent<std::string> GetFromCsv(const char* fileName);
-
-    template <typename T>
-    bool WriteToCsv(const char* fileName, const CsvContent<T>& content, OpenMode mode) {
+    CsvContent<std::string> GetFromCsv(const char* fileName)
+    {
         if (fileName == nullptr) {
             std::cout<<"ERR: invalid file name "<<'\n';
-            return false;
+            return {};
         }
-        // if file does not exists, create a new file
-        std::fstream file(fileName, mode | std::fstream::out);
-        std::stringstream temp;
-        for (auto it = content.begin(); it != content.end(); it++) {
-            temp.str("");
-            copy((*it).begin(), (*it).end(), std::ostream_iterator<T>(temp, ","));
-            file<<temp.str()<<'\n';
+        std::vector<std::string> row;
+        std::fstream file(fileName, std::ios::in);
+        std::string line, word;
+        if(!file.is_open()) {
+            std::cout<<"ERR: Can not open file: "<<fileName<<'\n';
+            return {};
         }
-        return true;
+        std::vector<std::vector<std::string>> res;
+        while(getline(file, line)) {
+            row.clear();
+            std::stringstream str(line);
+            while(getline(str, word, ',')) {
+                row.emplace_back(word);
+            }
+            res.emplace_back(row);
+        }
+        return res;
     }
 };
-
-#endif
