@@ -33,12 +33,34 @@ SOFTWARE.
 #include <sstream>
 #include <iterator>
 #include <algorithm>
-namespace File_IO
+namespace FileIO
 {
     template <typename T>
     using CsvContent = std::vector<std::vector<T>>;
     using OpenMode =  std::ios::ios_base::openmode; // app for append, trunc for overwrite
-    CsvContent<std::string> GetFromCsv(const char* fileName);
+    CsvContent<std::string> GetFromCsv(const char* fileName) {
+        if (fileName == nullptr) {
+            std::cout<<"ERR: invalid file name "<<'\n';
+            return {};
+        }
+        std::vector<std::string> row;
+        std::fstream file(fileName, std::ios::in);
+        std::string line, word;
+        if(!file.is_open()) {
+            std::cout<<"ERR: Can not open file: "<<fileName<<'\n';
+            return {};
+        }
+        std::vector<std::vector<std::string>> res;
+        while(getline(file, line)) {
+            row.clear();
+            std::stringstream str(line);
+            while(getline(str, word, ',')) {
+                row.emplace_back(word);
+            }
+            res.emplace_back(row);
+        }
+        return res;
+    }
 
     template <typename T>
     bool WriteToCsv(const char* fileName, const CsvContent<T>& content, OpenMode mode) {
@@ -60,6 +82,7 @@ namespace File_IO
     // default is double
     template<class T>
     inline T ConvertString(const std::string& input) {
+        std::cout<<"defualt is used!\n";
         return std::stod(input);
     }
 
@@ -98,12 +121,13 @@ namespace File_IO
         return std::stoull(input);
     }
 
+    using CsvContentItr = CsvContent<std::string>::iterator;
     template <typename T>
-    CsvContent<T> ConvertCsv(const CsvContent<std::string>& original)
+    CsvContent<T> ConvertCsv(CsvContentItr beginItr, CsvContentItr endItr)
     {
         CsvContent<T> res;
-        res.reserve(original.size());
-        std::for_each(original.begin(), original.end(), [&res](const std::vector<std::string>& a) {
+        res.reserve(static_cast<size_t>(std::distance(beginItr, endItr)));
+        std::for_each(beginItr, endItr, [&res](const std::vector<std::string>& a) {
             res.push_back({});
             std::for_each(a.begin(), a.end(), [&res](const std::string& b) {
                 res.back().push_back(ConvertString<T>(b));

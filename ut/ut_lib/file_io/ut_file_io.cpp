@@ -25,7 +25,7 @@ SOFTWARE.
 *************************************************************/
 
 #include "gtest/gtest.h"
-#include "csv_proc.cpp"
+#include "csv_proc.h"
 #include <algorithm>
 
 class ut_file_io : public testing::Test
@@ -37,32 +37,32 @@ class ut_file_io : public testing::Test
 
 TEST_F(ut_file_io, csv_read_test_normal)
 {
-    File_IO::CsvContent<std::string> reference{{"title 1", "1", "c", "po"},
+    FileIO::CsvContent<std::string> reference{{"title 1", "1", "c", "po"},
                                   {"title 2", "2", "2", "pcd"},
                                   {"title 3", "3", "d", "1dsfdo"}};
-    auto res = File_IO::GetFromCsv("./ut/data/csv_test/data1.csv");
+    auto res = FileIO::GetFromCsv("./ut/data/csv_test/data1.csv");
     ASSERT_NE(res.size(), 0u);
     EXPECT_TRUE(reference == res);
 }
 
 TEST_F(ut_file_io, csv_read_test_no_file)
 {
-    auto res = File_IO::GetFromCsv("data.csv");
+    auto res = FileIO::GetFromCsv("data.csv");
     EXPECT_EQ(res.size(), 0u);
 }
 
 TEST_F(ut_file_io, csv_read_test_nullptr)
 {
-    auto res = File_IO::GetFromCsv(nullptr);
+    auto res = FileIO::GetFromCsv(nullptr);
     EXPECT_EQ(res.size(), 0u);
 }
 
 TEST_F(ut_file_io, csv_write_test_nullptr)
 {
-    File_IO::CsvContent<std::string> reference{{"title 1", "1", "c", "po"},
+    FileIO::CsvContent<std::string> reference{{"title 1", "1", "c", "po"},
                                   {"title 2", "2", "2", "pcd"},
                                   {"title 3", "3", "d", "1dsfdo"}};
-    auto flag = File_IO::WriteToCsv(nullptr,
+    auto flag = FileIO::WriteToCsv(nullptr,
                                     reference,
                                     std::ios::trunc);
     EXPECT_FALSE(flag);
@@ -71,14 +71,14 @@ TEST_F(ut_file_io, csv_write_test_nullptr)
 // test write to csv in overwrite mode
 TEST_F(ut_file_io, csv_write_test_normal_trunc)
 {
-    File_IO::CsvContent<std::string> reference{{"title 1", "1", "c", "po"},
+    FileIO::CsvContent<std::string> reference{{"title 1", "1", "c", "po"},
                                   {"title 2", "2", "2", "pcd"},
                                   {"title 3", "3", "d", "1dsfdo"}};
-    auto flag = File_IO::WriteToCsv("./ut/data/csv_test/data2.csv",
+    auto flag = FileIO::WriteToCsv("./ut/data/csv_test/data2.csv",
                                     reference,
                                     std::ios::trunc);
     EXPECT_TRUE(flag);
-    auto res = File_IO::GetFromCsv("./ut/data/csv_test/data2.csv");
+    auto res = FileIO::GetFromCsv("./ut/data/csv_test/data2.csv");
     ASSERT_NE(res.size(), 0u);
     // compare the contents
     EXPECT_TRUE(reference == res);
@@ -101,22 +101,22 @@ TEST_F(ut_file_io, csv_write_test_normal_trunc)
 // test write to csv in append mode
 TEST_F(ut_file_io, csv_write_test_normal_app)
 {
-    File_IO::CsvContent<std::string> reference{{"title 1", "1", "c", "po"},
+    FileIO::CsvContent<std::string> reference{{"title 1", "1", "c", "po"},
                                   {"title 2", "2", "2", "pcd"},
                                   {"title 3", "3", "d", "1dsfdo"}};
-    auto flag = File_IO::WriteToCsv("./ut/data/csv_test/data2.csv",
+    auto flag = FileIO::WriteToCsv("./ut/data/csv_test/data2.csv",
                                     reference,
                                     std::ios::trunc);
     EXPECT_TRUE(flag);
-    flag = File_IO::WriteToCsv("./ut/data/csv_test/data2.csv",
+    flag = FileIO::WriteToCsv("./ut/data/csv_test/data2.csv",
                                     reference,
                                     std::ios::app);
     EXPECT_TRUE(flag);
-    File_IO::CsvContent<std::string> reference2;
+    FileIO::CsvContent<std::string> reference2;
     reference2.reserve(2 * reference.size());
     reference2.insert(reference2.end(), reference.begin(), reference.end());
     reference2.insert(reference2.end(), reference.begin(), reference.end());
-    auto res = File_IO::GetFromCsv("./ut/data/csv_test/data2.csv");
+    auto res = FileIO::GetFromCsv("./ut/data/csv_test/data2.csv");
     ASSERT_NE(res.size(), 0u);
     // compare the contents
     EXPECT_TRUE(reference2 == res);
@@ -138,15 +138,15 @@ TEST_F(ut_file_io, csv_write_test_normal_app)
 // test write to csv for input double
 TEST_F(ut_file_io, csv_write_test_normal_double)
 {
-    File_IO::CsvContent<double> reference{{ 1e9, 0.2, 0.03, -4.0 },
+    FileIO::CsvContent<double> reference{{ 1e9, 0.2, 0.03, -4.0 },
                                 { 50.0, 0.1236, 0.0, -91.9}};
-    auto flag = File_IO::WriteToCsv("./ut/data/csv_test/data3.csv",
+    auto flag = FileIO::WriteToCsv("./ut/data/csv_test/data3.csv",
                                     reference,
                                     std::ios::trunc);
     EXPECT_TRUE(flag);
-    auto res = File_IO::GetFromCsv("./ut/data/csv_test/data3.csv");
+    auto res = FileIO::GetFromCsv("./ut/data/csv_test/data3.csv");
     ASSERT_NE(res.size(), 0u);
-    auto resDouble = File_IO::ConvertCsv<double>(res);
+    auto resDouble = FileIO::ConvertCsv<double>(res.begin(), res.end());
     // compare the contents
     EXPECT_TRUE(reference == resDouble);
     if (reference == resDouble) {
