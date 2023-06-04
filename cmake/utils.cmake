@@ -17,19 +17,20 @@ endfunction()
 function(batch_add_exc required_args)
     cmake_parse_arguments(PARSE_ARGV
         0
-        EXC
+        EXCS
         ""
-        "SOURCE_LIST"
-        "LIBRARIES;COMPILE_OPTIONS;DIRECTORIES_INCLUDE"
+        ""
+        "SOURCE_LIST;LIBRARIES;COMPILE_OPTIONS;DIRECTORIES_INCLUDE"
     )
-    foreach(fileName IN LISTS ${EXT_SOURCE_LIST})
+
+    foreach(fileName ${EXCS_SOURCE_LIST})
         get_filename_component(targetname ${fileName} NAME_WE)
         add_single_exc(
             TARGET ${targetname}
             SOURCE ${fileName}
-            LIBRARIES ${EXT_LIBRARIES}
-            COMPILE_OPTIONS ${EXT_COMPILE_OPTIONS}
-            DIRECTORIES_INCLUDE ${EXT_DIRECTORIES_INCLUDE}
+            LIBRARIES ${EXCS_LIBRARIES}
+            COMPILE_OPTIONS ${EXCS_COMPILE_OPTIONS}
+            DIRECTORIES_INCLUDE ${EXCS_DIRECTORIES_INCLUDE}
         )
     endforeach()
 endfunction()
