@@ -1,5 +1,3 @@
 set(FILE_IO file_io)
-#aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/ file_io_src_list)
 add_library(${FILE_IO} INTERFACE)
 target_include_directories(${FILE_IO} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
-#target_compile_options(${FILE_IO} PRIVATE ${COMPILE_FLAGS})
