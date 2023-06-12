@@ -75,6 +75,8 @@ cppcheck_results.*
 # ut results
 ut/report/**
 ut/coverage/**
+**.bin
+
 # allow all gtest files to be uploaded
 !google_test/**
 # ignore coverage report

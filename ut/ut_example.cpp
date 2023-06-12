@@ -31,8 +31,8 @@ SOFTWARE.
 class ut_test1 : public testing::Test
 {
    protected:
-    virtual void SetUp() { std::cout << "setup testing.... \n"; }
-    virtual void TearDown() { std::cout << "teardown testing... \n"; }
+    virtual void SetUp() {}
+    virtual void TearDown() {}
     uint32_t GetRes(uint32_t a, uint32_t b)
     {
         return static_cast<uint32_t>(static_cast<uint64_t>(a) + b);

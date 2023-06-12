@@ -32,6 +32,8 @@ SOFTWARE.
 #include <queue>
 #include <functional>
 #include <memory>
+
+// common thread pool
 class ThreadPool {
 private:
     struct InteralData
@@ -89,9 +91,12 @@ private:
     static const size_t COUNT = 8;
 };
 
+// TO DO: thread pool with arguments
 class ThreadPoolWithArgs {
 private:
 public:
 };
+
+// TO DO: lock-free thread pool
 
 #endif

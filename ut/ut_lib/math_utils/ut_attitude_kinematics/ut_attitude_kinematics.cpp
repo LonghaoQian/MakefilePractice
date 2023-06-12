@@ -32,14 +32,8 @@ SOFTWARE.
 class ut_attitude_kinematics : public testing::Test
 {
    protected:
-    virtual void SetUp()
-    {
-        std::cout << "setup attitude kinematics testing.... \n";
-    }
-    virtual void TearDown()
-    {
-        std::cout << "teardown attitude kinematics testing... \n";
-    }
+    virtual void SetUp() {}
+    virtual void TearDown() {}
 };
 
 TEST_F(ut_attitude_kinematics, test_Veemap)

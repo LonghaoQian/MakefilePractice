@@ -23,3 +23,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 *************************************************************/
+
+#ifndef ATTITUDE_ESTIMATION
+#define ATTITUDE_ESTIMATION
+
+namespace AttitudeEstimation {
+
+};
+
+#endif

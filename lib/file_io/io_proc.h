@@ -23,11 +23,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 *************************************************************/
-#ifndef CSV_PROC_H
-#define CSV_PROC_H
+#ifndef IO_PROC_H
+#define IO_PROC_H
 
 #include <string>
 #include <vector>
+#include <array>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -135,6 +136,99 @@ namespace FileIO
         });
         return res;
     }
+
+    // write to binary
+    template<typename T, size_t bufferSize = 128>
+    class WriteBinary
+    {
+    public:
+        using value_type = T;
+        static const size_t type_size = sizeof(value_type);
+        // rigit now only supports pod
+        static_assert(std::is_pod<value_type>::value, "WriteBinary only supports pod!\n");
+        WriteBinary(const char* fileName, OpenMode mode) :
+            file{fileName, mode | std::fstream::out | std::ios::binary},
+            dataItr{dataBuffer.begin()} {}
+        WriteBinary() : dataItr{dataBuffer.begin()} {}
+        ~WriteBinary()
+        {
+            FlushBuffer();
+        }
+        WriteBinary(const WriteBinary &) = delete;
+        WriteBinary &operator=(const WriteBinary&) = delete;
+        bool Open(const char* fileName, OpenMode mode)
+        {
+            if(file.is_open()) {
+                std::cout<<"Err, file already opened!\n";
+                return false;
+            }
+            if (fileName == nullptr) {
+                std::cout<<"Err, file name is nullptr!\n";
+                return false;
+            }
+            file.open(fileName, mode | std::fstream::out | std::ios::binary);
+            return true;
+        }
+        bool Write(value_type *ptr, size_t num)
+        {
+            if (ptr == nullptr) {
+                std::cout<<"Err, null ptr!\n";
+                return false;
+            }
+            if(!file.is_open()) {
+                std::cout<<"Err, can not open file.\n";
+                return false;
+            }
+            file.write(reinterpret_cast<const char*>(ptr), type_size * num);
+            return true;
+        }
+
+        bool WriteToBuffer(value_type input)
+        {
+            if(!file.is_open()) {
+                std::cout<<"Err, can not open file.\n";
+                return false;
+            }
+            *dataItr = input;
+            dataItr++;
+            bool flag = true;
+            if (dataItr == dataBuffer.end()) {
+                // if buffer is full, write all to file
+                flag = FlushBuffer();
+            }
+            return flag;
+        }
+
+        // write all remaining data in the buffer to the file
+        bool FlushBuffer(void)
+        {
+            if(!file.is_open()) {
+                return false;
+            }
+            if (dataItr == dataBuffer.begin()) {
+                return true; // empty data array does not raise an error
+            }
+            file.write(reinterpret_cast<const char*>(dataBuffer.data()),
+                type_size * std::distance(dataBuffer.begin(), dataItr)); 
+            // reset the current idx
+            dataItr = dataBuffer.begin();
+            return true;
+        }
+        void Close(void)
+        {
+            if(!file.is_open()) {
+                return;
+            }
+            file.close();
+        }
+    private:
+        // file
+        std::fstream file;
+        // buffer
+        std::array<value_type, bufferSize> dataBuffer;
+        // buffer itr (dependent type)
+        typename std::array<value_type, bufferSize>::iterator dataItr;
+    };
 };
 
 #endif
