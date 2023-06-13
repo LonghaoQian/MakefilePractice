@@ -39,7 +39,7 @@ namespace FileIO
     template <typename T>
     using CsvContent = std::vector<std::vector<T>>;
     using OpenMode =  std::ios::ios_base::openmode; // app for append, trunc for overwrite
-    CsvContent<std::string> GetFromCsv(const char* fileName) {
+    inline CsvContent<std::string> GetFromCsv(const char* fileName) {
         if (fileName == nullptr) {
             std::cout<<"ERR: invalid file name "<<'\n';
             return {};

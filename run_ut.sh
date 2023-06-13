@@ -6,6 +6,8 @@ gTestSeed="--gtest_random_seed=1020"
 utResults="ut_results.txt"
 utResultsDir="ut/results/"
 outputDir="ut/report/"
+utDataBinaryDir="ut/data/binary_test"
+utDataCsvDir="ut/data/csv_test"
 # init execution list
 testSet=()
 # define all tests
@@ -22,6 +24,13 @@ if [ -f $utResultsDir$utResults ]; then
     rm $utResultsDir$utResults
 fi
 touch $utResultsDir$utResults
+# create directory
+if [ ! -d $utDataBinaryDir ]; then
+    mkdir $utDataBinaryDir
+fi
+if [ ! -d $utDataCsvDir ]; then
+    mkdir $utDataCsvDir
+fi
 # then run all tests
 search_block() {
     local file="$1" local leading_keyword="$2" local trailing_keyword="$3" # Use awk to find the block of text
