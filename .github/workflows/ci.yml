@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+    build:
+      runs-on: ubuntu-latest
+      
+      steps:
+        - uses: actions/checkout@v3
+        - uses: conda-incubator/setup-miniconda@v2
+          with:
+            auto-activate-base: true
+            activate-environment: ""
+        
+        - run: pip install numpy
+        
+        - name: Setup Ninja
+          uses: ashutoshvarma/setup-ninja@master
+          with:
+            version: 1.10.0
+      
+        - name: Install eigen
+          run: sudo apt install libeigen3-dev
+            
+        - name: Debug config
+          run: ${{github.workspace}}/config_debug.sh
+          
+        - name: Debug build
+          run: ${{github.workspace}}/build_debug.sh
+       
+        - name: Release config
+          run: ${{github.workspace}}/config_release.sh
+          
+        - name: Release build
+          run: ${{github.workspace}}/build_release.sh
+
+        - name: Run st
+          run: ${{github.workspace}}/run_ut.sh
