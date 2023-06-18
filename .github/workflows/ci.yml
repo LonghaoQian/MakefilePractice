@@ -24,10 +24,13 @@ jobs:
           uses: ashutoshvarma/setup-ninja@master
           with:
             version: 1.10.0
-      
-        - name: Install eigen
-          run: sudo apt install libeigen3-dev
-            
+        
+        - name: Checkout repository
+          uses: actions/checkout@v2
+        
+        - name: Checkout submodules
+          run: git submodule update --init --recursive
+
         - name: Debug config
           run: ${{github.workspace}}/config_debug.sh
           
