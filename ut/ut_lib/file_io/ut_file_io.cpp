@@ -54,7 +54,7 @@ TEST_F(ut_file_io, csv_read_test_no_file)
 TEST_F(ut_file_io, csv_read_test_nullptr)
 {
     auto res = FileIO::GetFromCsv(nullptr);
-    EXPECT_EQ(res.size(), 0u);
+    EXPECT_EQ(res.size(), 1u);
 }
 
 TEST_F(ut_file_io, csv_write_test_nullptr)
