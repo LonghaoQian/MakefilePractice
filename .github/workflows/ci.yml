@@ -43,5 +43,5 @@ jobs:
         - name: Release build
           run: ${{github.workspace}}/build_release.sh
 
-        #- name: Run st
-         # run: ${{github.workspace}}/run_ut.sh
+        - name: Run st
+          run: ${{github.workspace}}/run_ut.sh
