@@ -26,13 +26,13 @@ SOFTWARE.
 
 // test for async, future, promise
 
-#define _GLIBCXX_USE_NANOSLEEP 
-
 #include <iostream>
 #include <vector>
 #include <chrono>
 #include <future>
 #include <mutex>
+
+#define _GLIBCXX_USE_NANOSLEEP 
 
 int Add(int a, int b)
 {
