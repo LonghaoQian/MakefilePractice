@@ -77,3 +77,4 @@ done
 
 # if there are failed tests, display the following info
 echo -e "${RED}${#var4[@]} failed tests found!${NC}"
+exit 1
