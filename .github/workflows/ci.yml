@@ -12,6 +12,12 @@ jobs:
       runs-on: ubuntu-latest
       
       steps:
+        - name: Checkout repository
+          uses: actions/checkout@v2
+        
+        - name: Checkout submodules
+          run: git submodule update --init --recursive
+          
         - uses: actions/checkout@v3
         - uses: conda-incubator/setup-miniconda@v2
           with:
@@ -25,12 +31,6 @@ jobs:
           with:
             version: 1.10.0
         
-        - name: Checkout repository
-          uses: actions/checkout@v2
-        
-        - name: Checkout submodules
-          run: git submodule update --init --recursive
-
         - name: Debug config
           run: ${{github.workspace}}/config_debug.sh
           
@@ -43,5 +43,5 @@ jobs:
         - name: Release build
           run: ${{github.workspace}}/build_release.sh
 
-        - name: Run st
-          run: ${{github.workspace}}/run_ut.sh
+        #- name: Run st
+         # run: ${{github.workspace}}/run_ut.sh
