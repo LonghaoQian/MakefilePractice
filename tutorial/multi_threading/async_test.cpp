@@ -26,6 +26,8 @@ SOFTWARE.
 
 // test for async, future, promise
 
+#define _GLIBCXX_USE_NANOSLEEP 
+
 #include <iostream>
 #include <vector>
 #include <chrono>
