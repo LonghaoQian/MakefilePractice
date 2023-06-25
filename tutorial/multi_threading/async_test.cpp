@@ -31,6 +31,7 @@ SOFTWARE.
 #include <chrono>
 #include <future>
 #include <mutex>
+#include <thread>
 
 int Add(int a, int b)
 {
