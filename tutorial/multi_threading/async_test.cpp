@@ -31,8 +31,7 @@ SOFTWARE.
 #include <chrono>
 #include <future>
 #include <mutex>
-
-#define _GLIBCXX_USE_NANOSLEEP 
+#include <thread>
 
 int Add(int a, int b)
 {
