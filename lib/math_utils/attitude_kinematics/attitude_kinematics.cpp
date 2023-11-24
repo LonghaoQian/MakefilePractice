@@ -190,14 +190,14 @@ Vector3d GetEulerAngleFromQuaterion(const Quaterion &quaterion)
     // roll (x-axis rotation)
     Vector3d Euler;
     double sinr_cosp = +2.0 * (quaterion(QUAT_W) * quaterion(QUAT_X) +
-                                quaterion(QUAT_Y) * quaterion(QUAT_Z));
+                               quaterion(QUAT_Y) * quaterion(QUAT_Z));
     double cosr_cosp = +1.0 - 2.0 * (quaterion(QUAT_X) * quaterion(QUAT_X) +
-                                      quaterion(QUAT_Y) * quaterion(QUAT_Y));
+                                     quaterion(QUAT_Y) * quaterion(QUAT_Y));
     double roll = atan2(sinr_cosp, cosr_cosp);
 
     // pitch (y-axis rotation)
     double sinp = +2.0 * (quaterion(QUAT_W) * quaterion(QUAT_Y) -
-                           quaterion(QUAT_Z) * quaterion(QUAT_X));
+                          quaterion(QUAT_Z) * quaterion(QUAT_X));
     double pitch;
     if (fabs(sinp) >= 1)
         pitch = copysign(M_PI / 2, sinp);  // use 90 degrees if out of range
@@ -206,9 +206,9 @@ Vector3d GetEulerAngleFromQuaterion(const Quaterion &quaterion)
 
     // yaw (z-axis rotation)
     double siny_cosp = +2.0 * (quaterion(QUAT_W) * quaterion(QUAT_Z) +
-                                quaterion(QUAT_X) * quaterion(QUAT_Y));
+                               quaterion(QUAT_X) * quaterion(QUAT_Y));
     double cosy_cosp = +1.0 - 2.0 * (quaterion(QUAT_Y) * quaterion(QUAT_Y) +
-                                      quaterion(QUAT_Z) * quaterion(QUAT_Z));
+                                     quaterion(QUAT_Z) * quaterion(QUAT_Z));
     double yaw = atan2(siny_cosp, cosy_cosp);
     Euler(EULER_ROLL) = roll;
     Euler(EULER_PITCH) = pitch;
@@ -296,4 +296,13 @@ RotationMatrix GetR_IBFromQuaterion(const Quaterion &quaterion)
                           GetLmatrixFromQuaterion(quaterion).transpose();
     return R_IB;
 }
+
+void GetR_IBFromQuaterion(const Quaterion &quaterion, RotationMatrix &R_IB)
+{
+    R_IB(0, 0) = quaterion(QUAT_W) * quaterion(QUAT_W) +
+                 quaterion(QUAT_X) * quaterion(QUAT_X) -
+                 quaterion(QUAT_Y) * quaterion(QUAT_Y) -
+                 quaterion(QUAT_Z) * quaterion(QUAT_Z);
+}
+
 }  // namespace MathAuxiliary
