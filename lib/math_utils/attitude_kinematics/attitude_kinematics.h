@@ -29,7 +29,6 @@ SOFTWARE.
 
 #include "math_utils.h"
 
-
 namespace MathAuxiliary
 {
 /* ---- lie algebra ---- */
@@ -49,9 +48,11 @@ RotationMatrix RotationMatrixFromPitch(double theta);
 RotationMatrix RotationMatrixFromYaw(double psi);
 constexpr uint32_t VECTOR_EXPRESSION_ROWS = 9;
 // distribute the columns of a rotation matrix into a 9 by 1 vector
-Matrix<double, VECTOR_EXPRESSION_ROWS, 1> ConvertRotationMatrixToVector(const RotationMatrix &R);
+Matrix<double, VECTOR_EXPRESSION_ROWS, 1> ConvertRotationMatrixToVector(
+    const RotationMatrix &R);
 // form a rotation matrix with a 9 by 1 vector by columns
-RotationMatrix ConvertVectorToRotationMatrix(const Matrix<double, VECTOR_EXPRESSION_ROWS, 1> &v);
+RotationMatrix ConvertVectorToRotationMatrix(
+    const Matrix<double, VECTOR_EXPRESSION_ROWS, 1> &v);
 
 /* ---- quaterion ---- */
 constexpr uint32_t AUX_MATRIX_ROWS = 3;
@@ -68,6 +69,8 @@ Matrix<double, AUX_MATRIX_ROWS, AUX_MATRIX_COLS> GetRmatrixFromQuaterion(
     const Quaterion &quaterion);
 // compute the rotation matrix corresponding to a quaternion
 RotationMatrix GetR_IBFromQuaterion(const Quaterion &quaterion);
+
+void GetR_IBFromQuaterion(const Quaterion &quaterion, RotationMatrix &R_IB);
 
 }  // namespace MathAuxiliary
 

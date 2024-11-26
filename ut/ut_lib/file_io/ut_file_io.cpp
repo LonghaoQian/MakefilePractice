@@ -27,6 +27,7 @@ SOFTWARE.
 #include "gtest/gtest.h"
 #include "io_proc.h"
 #include <algorithm>
+#include <Eigen/Eigen>
 
 class ut_file_io : public testing::Test
 {
@@ -416,5 +417,42 @@ TEST_F(ut_file_io, binary_flush_buffer_exception_no_file)
     {
         FileIO::WriteBinary<int32_t, 10> writeBinary;
         ASSERT_FALSE(writeBinary.FlushBuffer());
+    }
+}
+
+TEST_F(ut_file_io, binary_read_from_binary)
+{
+    const uint32_t numOfRowsRef = 10;
+    const uint32_t numOfColsRef = 10;
+    FileIO::ReadBinary<double> file;
+    ASSERT_TRUE(file.Open("./ut/data/binary_test/matrix_read_test.dat"));
+    ASSERT_TRUE(file.ClearAndRead());
+    auto &data = file.GetDataBuffer();
+    uint32_t numOfRows = static_cast<uint32_t>(data.at(0));
+    uint32_t numOfCols = static_cast<uint32_t>(data.at(1));
+    ASSERT_EQ(numOfRows, numOfRowsRef);
+    ASSERT_EQ(numOfCols, numOfColsRef);
+    ASSERT_EQ(data.size(), numOfRows * numOfCols + 2);
+    Eigen::Map<const Eigen::MatrixXd> A(data.data() + 2, numOfRows, numOfCols);
+
+    uint32_t counter = 1;
+    for (uint32_t j = 0; j < numOfCols; j++) {
+        for (uint32_t i = 0; i < numOfRows; i++) {
+            EXPECT_EQ(A(i, j), static_cast<double>(counter));
+            counter++;
+        }
+    }
+    // append
+    ASSERT_TRUE(file.ReadAndAppend());
+    uint32_t total = numOfRowsRef * numOfColsRef;
+    ASSERT_EQ(data.size(), 2 * total + 4);
+    Eigen::Map<const Eigen::MatrixXd> B(data.data() + total + 4, numOfRows,
+                                        numOfCols);
+    counter = 1;
+    for (uint32_t j = 0; j < numOfCols; j++) {
+        for (uint32_t i = 0; i < numOfRows; i++) {
+            EXPECT_EQ(B(i, j), static_cast<double>(counter));
+            counter++;
+        }
     }
 }
