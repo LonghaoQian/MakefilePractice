@@ -82,3 +82,9 @@ ut/coverage/**
 # ignore coverage report
 **/coverage_report/**
 *.info
+
+# python
+**/__pycache__/**
+
+# pybind
+**.egg-info/**

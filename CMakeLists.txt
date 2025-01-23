@@ -46,3 +46,5 @@ if (${BUILD_TYPE_} STREQUAL "debug")
     # ut is only built in debug mode
     add_subdirectory(ut)
 endif()
+#---------------- python binding --------------------
+add_subdirectory(python_binding)
