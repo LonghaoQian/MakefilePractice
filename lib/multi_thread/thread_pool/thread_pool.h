@@ -33,7 +33,7 @@ SOFTWARE.
 #include <functional>
 #include <memory>
 
-// common thread pool
+// thread pool
 class ThreadPool {
 private:
     struct InteralData
@@ -96,6 +96,8 @@ class ThreadPoolWithArgs {
 private:
 public:
 };
+
+// thread pool with time stamp consistency check
 
 // TO DO: lock-free thread pool
 

@@ -32,36 +32,144 @@ SOFTWARE.
 #include <algorithm>
 #include <chrono>
 #include "msg_queue.h"
+#include <atomic>
+
+struct Frame {
+    double data{0.0};
+    uint32_t frameId{0};
+    Frame(double data_, uint32_t frameId_)
+    {
+        data = data_;
+        frameId = frameId_;
+    }
+};
+class TestStruct {
+    public:
+    TestStruct() = default;
+    ~TestStruct() = default;
+    // redefine copy constructor
+    TestStruct(const TestStruct& other) : data(other.data) {
+    };
+    TestStruct& operator=(const TestStruct& other) {
+        if (this == &other) {
+            return *this;
+        }
+        data = other.data;
+        return *this;
+    };
+    TestStruct(TestStruct&& other) noexcept
+    : data(std::move(other.data)){
+        other.data.clear();
+        std::cout<<"move constructor is called\n";
+    };
+    TestStruct& operator=(TestStruct&& other) {
+        if(this == &other) {
+            return *this;
+        }
+        data.clear();
+        data = std::move(other.data);
+        other.data.clear();
+        std::cout<<"move assignment is called\n";
+    };
+    // data array
+    std::vector<Frame> data;
+};
+
+std::atomic<bool> g_consumerOK{false};
 
 int main(void)
 {
-    ThreadSafeQueue<uint32_t> msgQueue;
-    std::vector<uint32_t> data = { 0, 2, 4, 5, 7 };
+    
+    ThreadSafeQueue<Frame> msgQueue;
+    std::vector<Frame> data;
 
-    std::thread consumer([&](void){
-        bool flag = true;
-        while(flag) {
-            uint32_t temp;
-            msgQueue.WaitAndPop(temp);
-            std::cout<<"get value: "<<temp<<'\n';
-            if (temp == data.back()) {
-                flag = false;
-                std::cout<<"exit... \n";
-            }
+    ThreadSafeQueue<uint32_t> timerQueue;
+    std::vector<uint32_t>timerQ;
+
+    data.emplace_back(0.1, 1);
+    data.emplace_back(0.3, 2);
+    data.emplace_back(0.0, 3);
+    data.emplace_back(-0.1, 4);
+    data.emplace_back(0.5, 5);
+
+    timerQ.push_back(2);
+    timerQ.push_back(2);
+    timerQ.push_back(2);
+    timerQ.push_back(4);
+    timerQ.push_back(6);
+
+    g_consumerOK = true;
+
+    // start producerTime
+    std::thread producerTime([&](void){
+        std::cout<<"producer Time started! \n";
+        timerQueue.Push(timerQ[0]);
+        std::this_thread::sleep_for(std::chrono::seconds(3));
+        for(uint32_t i = 1; i < 3; i++) {
+            timerQueue.Push(timerQ[i]);
         }
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        for(uint32_t i = 3; i < 5; i++) {
+            timerQueue.Push(timerQ[i]);
+        }
+        std::cout<<"producer Time ended! \n";
     });
-    std::cout<<"consumer started! \n";
+    // start producerData
+    std::thread producerData([&](void){
+        std::cout<<"producer Data started! \n";
+        // wait for 1 second
+        for(uint32_t i = 0; i < 2;i++) {
+            msgQueue.Push(data[i]);
+        }
+        // wait for 2 seconds
+        std::this_thread::sleep_for(std::chrono::seconds(2));
+        for(uint32_t i = 2; i < 4; i++) {
+            msgQueue.Push(data[i]);
+        }
+        std::cout<<"producer Data ended! \n";
+    });
+
     // wait for 1 second
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
-    // start producer
-    std::thread producer([&](void){
-        for(auto& t : data) {
-            msgQueue.Push(t);
+    std::thread consumer([&](void){
+        std::cout<<"consumer started! \n";
+        // define buffer
+        std::vector<Frame> buffer;
+        uint32_t frameId{0};
+        while(g_consumerOK) {
+            // clear buffer
+            buffer.clear();
+            // wait for timer producer
+            // timerQueue.WaitAndPop(frameId);
+            timerQueue.WaitAndPop(frameId);
+            if (timerQueue.IsTransmissionEnd()) {
+                break;
+            }
+            // check data queue
+            msgQueue.BatchPop(buffer, [&frameId] (const Frame& frame) {
+                 return frameId > frame.frameId;
+            });
+            // print buffer size
+            std::cout <<"curr frame id: "<<frameId<<'\n';
+            std::cout<< "size of the buffer is from pop is: "<< buffer.size() <<'\n';
+            // print buffer content
+            for (auto& t : buffer) {
+                std::cout<<"frame id:"<< t.frameId<<" data:"<<t.data<<'\n';
+            }
+            
         }
+        std::cout<<"consumer ended! \n";
     });
-    std::cout<<"producer started! \n";
-    producer.join();
+
+    // wait for 5 seconds
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+    timerQueue.NotifyEndOfTransmission();
+    msgQueue.NotifyEndOfTransmission();
+    g_consumerOK = false;
+
+    producerData.join();
+    producerTime.join();
     consumer.join();
     return 0;
 }

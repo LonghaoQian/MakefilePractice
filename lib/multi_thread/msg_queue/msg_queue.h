@@ -30,38 +30,90 @@ SOFTWARE.
 #include <thread>
 #include <condition_variable>
 #include <queue>
+#include <functional>
+#include <vector>
+#include <atomic>
 
-// methods of template class must be defined in the same .h file
 template<class T>
 class ThreadSafeQueue {
 public:
-    ThreadSafeQueue(void) = default;
-    ~ThreadSafeQueue(void) = default;
-    void Push(T new_value) {
-            std::lock_guard<std::mutex> lk(mut);
-            dataQueue.push(std::move(new_value));
-            dataCond.notify_one();
+    ThreadSafeQueue() = default;
+    ~ThreadSafeQueue() = default;
+
+    void Push(const T& new_value) {
+        std::lock_guard<std::mutex> lk(mut);
+        dataQueue.push(new_value);
+        dataCond.notify_one();
     }
+
+    void Push(T&& new_value) {
+        std::lock_guard<std::mutex> lk(mut);
+        dataQueue.push(std::move(new_value));
+        dataCond.notify_one();
+    }
+
     void WaitAndPop(T& value) {
         std::unique_lock<std::mutex> lk(mut);
-        dataCond.wait(lk, [this]{ return !dataQueue.empty(); });
-        value = std::move(dataQueue.front());
-        dataQueue.pop();
+        dataCond.wait(lk, [this]{ return !dataQueue.empty() || transmissionEnd.load(std::memory_order_acquire); });
+        
+        if (!dataQueue.empty()) { // Ensure queue is not empty before popping
+            value = std::move(dataQueue.front());
+            dataQueue.pop();
+        }
     }
+
     bool TryPop(T& value) {
         std::lock_guard<std::mutex> lk(mut);
-        if(dataQueue.empty()) { return false; }
+        if (dataQueue.empty()) return false;
+        
         value = std::move(dataQueue.front());
         dataQueue.pop();
+        return true;
     }
-    bool Empty(void) const {
+
+    // Pop if additional criteria are matched
+    template<typename PredicateType>
+    bool TryPop(T& value, PredicateType predicate) {
+        std::lock_guard<std::mutex> lk(mut);
+        if (dataQueue.empty() || !predicate(dataQueue.front())) {
+            return false;
+        }
+        
+        value = std::move(dataQueue.front());
+        dataQueue.pop();
+        return true;
+    }
+
+    // Batch pop if additional criteria are matched
+    template<typename PredicateType>
+    void BatchPop(std::vector<T>& buffer, PredicateType predicate) {
+        buffer.clear();
+        std::lock_guard<std::mutex> lk(mut);
+        while (!dataQueue.empty() && predicate(dataQueue.front())) {
+            buffer.emplace_back(std::move(dataQueue.front()));
+            dataQueue.pop();
+        }
+    }
+
+    bool Empty() const {
         std::lock_guard<std::mutex> lk(mut);
         return dataQueue.empty();
     }
+
+    void NotifyEndOfTransmission() {
+        transmissionEnd.store(true, std::memory_order_release);
+        dataCond.notify_all();  // Notify all threads instead of one
+    }
+
+    bool IsTransmissionEnd() const {
+        return transmissionEnd.load(std::memory_order_acquire);
+    }
+
 private:
     mutable std::mutex mut;
     std::queue<T> dataQueue;
     std::condition_variable dataCond;
+    std::atomic<bool> transmissionEnd{false};
 };
 
 #endif
