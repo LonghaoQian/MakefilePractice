@@ -13,35 +13,45 @@ jobs:
       
       steps:
         - name: Checkout repository
-          uses: actions/checkout@v2
+          uses: actions/checkout@v3
         
         - name: Checkout submodules
           run: git submodule update --init --recursive
-          
-        - uses: actions/checkout@v3
+
         - uses: conda-incubator/setup-miniconda@v2
           with:
-            auto-activate-base: true
-            activate-environment: ""
+            auto-update-conda: true
+            environment-name: ci-env
+            python-version: 3.9
+            auto-activate-base: false
+            activate-environment: ci-env
         
-        - run: pip install numpy
-        
+        - name: Install Python dependencies
+          shell: bash -l {0}
+          run: |
+            pip install numpy
+
         - name: Setup Ninja
           uses: ashutoshvarma/setup-ninja@master
           with:
             version: 1.10.0
         
         - name: Debug config
-          run: ${{github.workspace}}/config_debug.sh
-          
+          working-directory: ${{github.workspace}}
+          run: bash ./config_debug.sh
+
         - name: Debug build
-          run: ${{github.workspace}}/build_debug.sh
-       
+          working-directory: ${{github.workspace}}
+          run: bash ./build_debug.sh
+
         - name: Release config
-          run: ${{github.workspace}}/config_release.sh
-          
+          working-directory: ${{github.workspace}}
+          run: bash ./config_release.sh
+
         - name: Release build
-          run: ${{github.workspace}}/build_release.sh
+          working-directory: ${{github.workspace}}
+          run: bash ./build_release.sh
 
         - name: Run st
-          run: ${{github.workspace}}/run_ut.sh
+          working-directory: ${{github.workspace}}
+          run: bash ./run_ut.sh
