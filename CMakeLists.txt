@@ -47,4 +47,4 @@ if (${BUILD_TYPE_} STREQUAL "debug")
     add_subdirectory(ut)
 endif()
 #---------------- python binding --------------------
-add_subdirectory(python_binding)
+# add_subdirectory(python_binding)

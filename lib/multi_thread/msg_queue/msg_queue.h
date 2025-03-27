@@ -30,24 +30,31 @@ SOFTWARE.
 #include <thread>
 #include <condition_variable>
 #include <queue>
-#include <functional>
 #include <vector>
 #include <atomic>
 
-template<class T>
+template<class T, size_t bufferSize>
 class ThreadSafeQueue {
 public:
     ThreadSafeQueue() = default;
     ~ThreadSafeQueue() = default;
+    ThreadSafeQueue(const ThreadSafeQueue&) = delete;
+    ThreadSafeQueue& operator=(const ThreadSafeQueue&) = delete;
 
     void Push(const T& new_value) {
         std::lock_guard<std::mutex> lk(mut);
+        if (dataQueue.size() >= bufferSize) {
+          dataQueue.pop();
+        }
         dataQueue.push(new_value);
         dataCond.notify_one();
     }
 
     void Push(T&& new_value) {
         std::lock_guard<std::mutex> lk(mut);
+        if (dataQueue.size() >= bufferSize) {
+          dataQueue.pop();
+        }
         dataQueue.push(std::move(new_value));
         dataCond.notify_one();
     }
@@ -56,7 +63,7 @@ public:
         std::unique_lock<std::mutex> lk(mut);
         dataCond.wait(lk, [this]{ return !dataQueue.empty() || transmissionEnd.load(std::memory_order_acquire); });
         
-        if (!dataQueue.empty()) { // Ensure queue is not empty before popping
+        if (!dataQueue.empty()) {
             value = std::move(dataQueue.front());
             dataQueue.pop();
         }
@@ -78,7 +85,6 @@ public:
         if (dataQueue.empty() || !predicate(dataQueue.front())) {
             return false;
         }
-        
         value = std::move(dataQueue.front());
         dataQueue.pop();
         return true;
@@ -102,7 +108,7 @@ public:
 
     void NotifyEndOfTransmission() {
         transmissionEnd.store(true, std::memory_order_release);
-        dataCond.notify_all();  // Notify all threads instead of one
+        dataCond.notify_all();
     }
 
     bool IsTransmissionEnd() const {
@@ -115,5 +121,4 @@ private:
     std::condition_variable dataCond;
     std::atomic<bool> transmissionEnd{false};
 };
-
 #endif

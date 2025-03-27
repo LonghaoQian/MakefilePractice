@@ -24,14 +24,14 @@ SOFTWARE.
 
 *************************************************************/
 
-// test msg queue
+// test msg queue with aligned storage
 
 #include <iostream>
 #include <vector>
 #include <thread>
 #include <algorithm>
 #include <chrono>
-#include "msg_queue.h"
+#include "msg_queue_aligned_storage.h"
 #include <atomic>
 
 struct Frame {
@@ -80,10 +80,10 @@ std::atomic<bool> g_consumerOK{false};
 int main(void)
 {
     
-    ThreadSafeQueue<Frame, 32> msgQueue;
+    ThreadSafeQueueAlignedStorage<Frame, 64> msgQueue;
     std::vector<Frame> data;
 
-    ThreadSafeQueue<uint32_t, 32> timerQueue;
+    ThreadSafeQueueAlignedStorage<uint32_t, 64> timerQueue;
     std::vector<uint32_t>timerQ;
 
     data.emplace_back(0.1, 1);
@@ -102,7 +102,6 @@ int main(void)
 
     // start producerTime
     std::thread producerTime([&](void){
-        std::cout<<"producer Time started! \n";
         timerQueue.Push(timerQ[0]);
         std::this_thread::sleep_for(std::chrono::seconds(3));
         for(uint32_t i = 1; i < 3; i++) {
@@ -119,12 +118,12 @@ int main(void)
         std::cout<<"producer Data started! \n";
         // wait for 1 second
         for(uint32_t i = 0; i < 2;i++) {
-            msgQueue.Push(data[i]);
+            msgQueue.Push(std::move(data[i]));
         }
         // wait for 2 seconds
         std::this_thread::sleep_for(std::chrono::seconds(2));
-        for(uint32_t i = 2; i < 4; i++) {
-            msgQueue.Push(data[i]);
+        for(uint32_t i = 2; i < 5; i++) {
+            msgQueue.Push(std::move(data[i]));
         }
         std::cout<<"producer Data ended! \n";
     });
@@ -141,7 +140,6 @@ int main(void)
             // clear buffer
             buffer.clear();
             // wait for timer producer
-            // timerQueue.WaitAndPop(frameId);
             timerQueue.WaitAndPop(frameId);
             if (timerQueue.IsTransmissionEnd()) {
                 break;
@@ -163,8 +161,8 @@ int main(void)
         std::cout<<"consumer ended! \n";
     });
 
-    // wait for 5 seconds
-    std::this_thread::sleep_for(std::chrono::seconds(5));
+    // wait for 8 seconds
+    std::this_thread::sleep_for(std::chrono::seconds(8));
     timerQueue.NotifyEndOfTransmission();
     msgQueue.NotifyEndOfTransmission();
     g_consumerOK = false;
