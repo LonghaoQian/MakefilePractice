@@ -238,10 +238,10 @@ class WriteBinary
    private:
     // file
     std::fstream file;
+    // buffer
+     std::array<value_type, bufferSize> dataBuffer;
     // buffer itr (dependent type)
     typename std::array<value_type, bufferSize>::iterator dataItr;
-    // buffer
-    std::array<value_type, bufferSize> dataBuffer;
 };
 
 template <typename T>
